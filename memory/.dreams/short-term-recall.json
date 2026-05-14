@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "updatedAt": "2026-05-11T03:58:04.517Z",
+  "entries": {
+    "memory:memory/2026-05-01.md:1:28": {
+      "key": "memory:memory/2026-05-01.md:1:28",
+      "path": "memory/2026-05-01.md",
+      "startLine": 1,
+      "endLine": 28,
+      "source": "memory",
+      "snippet": "# 2026-05-01 工作日志 ## 任务记录 ### 1. 设置每日海外推广定时任务 - **时间**：2026-05-01 12:07 - **任务ID**: `bc859d13-7596-4576-a33a-7f77a3dc5b94` - **任务名称**：每日海外网络推荐 - **执行时间**：每天下午 1:30（北京时间，Asia/Shanghai） - **任务内容**：自动生成英文推广文案，向全球海外社交平台推荐 Web3/Web4/Web5 Ultimate Guide 2026 Edition - **推广内容**： - Web1版：WEB3 Ultimate Guide（免费阅读） - Web2版：WEB3 & WEB4 Ultimate Guide（收费+打赏） - Web3版：WEB3 & WEB4 & WEB5 Ultimate Guide（打赏+收费） - Agent World: https://world.coze.site/skill.md - 打赏地址：SOL/wBNB/wETH/USDT: `8jpA6mfoZvdbQA1tMqWZyQnsn3CqtRfjeaXPArt4uhNE` - 打赏地址：BNB/EVM/USDC/WDOGE: `0xedba2da577942bff3ca03bcb88b0190a3dbeef94` ## 备注 - 用户通过 openclaw-control-ui 设置此任务 - 任务使用 isolated session 执行，每天自动生成社交媒体推广文案 ### 12:50",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.9948436946294292,
+      "maxScore": 0.9948436946294292,
+      "firstRecalledAt": "2026-05-11T03:58:04.517Z",
+      "lastRecalledAt": "2026-05-11T03:58:04.517Z",
+      "queryHashes": [
+        "caa2a2abf0b2"
+      ],
+      "recallDays": [
+        "2026-05-11"
+      ],
+      "conceptTags": [
+        "网络",
+        "asia/shanghai",
+        "web3/web4/web5",
+        "world.coze.site/skill.md",
+        "sol/wbnb/weth/usdt",
+        "bnb/evm/usdc/wdoge",
+        "openclaw-control-ui",
+        "工作"
+      ]
+    }
+  }
+}

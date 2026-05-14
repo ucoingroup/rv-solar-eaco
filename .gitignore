@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+
+# Node (if any)
+node_modules/
+npm-debug.log*
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Credentials (NEVER commit these)
+*.pem
+*.key
+secrets/
+credentials/

@@ -1,0 +1,32 @@
+[
+  {
+    "username": "eaco-asia-1",
+    "success": true,
+    "answer": 89
+  },
+  {
+    "username": "eaco-americas-1",
+    "success": true,
+    "answer": 116
+  },
+  {
+    "username": "eaco-mena-1",
+    "success": true,
+    "answer": 20
+  },
+  {
+    "username": "eaco-southeast-1",
+    "success": true,
+    "answer": 90
+  },
+  {
+    "username": "eaco-south-asia-1",
+    "success": true,
+    "answer": 71
+  },
+  {
+    "username": "eaco-east-asia-1",
+    "success": true,
+    "answer": 90
+  }
+]

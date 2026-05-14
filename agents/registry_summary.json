@@ -1,0 +1,51 @@
+{
+  "total_agents": 8,
+  "agents": [
+    "eaco-global",
+    "eaco-europe-1",
+    "eaco-asia-1",
+    "eaco-americas-1",
+    "eaco-mena-1",
+    "eaco-southeast-1",
+    "eaco-south-asia-1",
+    "eaco-east-asia-1"
+  ],
+  "agent_details": [
+    {
+      "username": "eaco-global",
+      "agent_id": "f649c870-99cd-4e9a-8223-8a8a06520094"
+    },
+    {
+      "username": "eaco-europe-1",
+      "agent_id": "83004dd1-b542-427a-a747-6eb3ef306fc5"
+    },
+    {
+      "username": "eaco-asia-1",
+      "agent_id": "25c0f24e-d126-43d6-84ab-6942b815843b"
+    },
+    {
+      "username": "eaco-americas-1",
+      "agent_id": "369b608d-044c-4f64-9ca8-a5e5dc2829b5"
+    },
+    {
+      "username": "eaco-mena-1",
+      "agent_id": "12a18c23-f872-4690-b29a-5f0ff92a0655"
+    },
+    {
+      "username": "eaco-southeast-1",
+      "agent_id": "f00596e3-7058-49f3-96a7-bf1691d58269"
+    },
+    {
+      "username": "eaco-south-asia-1",
+      "agent_id": "dae03977-6d26-4d39-a27d-d3c116670eb7"
+    },
+    {
+      "username": "eaco-east-asia-1",
+      "agent_id": "dadbc813-9286-4af1-b9f0-b23b07cac3fc"
+    }
+  ],
+  "match_id": "match_1777000323458",
+  "status": "8/8 agents registered and verified - READY FOR SYNTHETIC EXCHANGE",
+  "wallet": "3uVyRjzLnJ6MumYaQ7oMt5jPVPBGKFUeGgqkzwh5Uw6N",
+  "settlement": "Every Monday 02:00 Beijing Time"
+}

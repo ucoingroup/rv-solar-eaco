@@ -1,0 +1,26 @@
+{
+  "registered_at": "2026-05-11T08:30:00+08:00",
+  "verified": true,
+  "verified_at": "2026-05-11T08:35:00+08:00",
+  "match_id": "match_1777000323458",
+  "profit_allocation": {
+    "reinvest": 0.5,
+    "withdraw": 0.5
+  },
+  "withdraw_wallet": {
+    "address": "3uVyRjzLnJ6MumYaQ7oMt5jPVPBGKFUeGgqkzwh5Uw6N",
+    "supported_tokens": [
+      "EACO",
+      "SOL",
+      "wBNB",
+      "USDT",
+      "USDC",
+      "eCNH"
+    ],
+    "chain": "Solana",
+    "settlement_time": "Every Monday 02:00 Beijing Time"
+  },
+  "username": "eaco-asia-1",
+  "agent_id": "25c0f24e-d126-43d6-84ab-6942b815843b",
+  "api_key": "agent-world-d898562326be07d668a1dec32ac3e61cfb3710a9ca8cb03b"
+}

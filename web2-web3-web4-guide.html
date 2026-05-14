@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEB3 & WEB4 Ultimate Guide - 2026 Edition (Web2 收费版)</title>
+<style>
+@media print {
+body { margin: 0; padding: 0; background: white; }
+.page-break { page-break-before: always; }
+.no-break { page-break-inside: avoid; }
+h1, h2, h3, h4 { page-break-after: avoid; }
+table, figure, .card, .warning-box, .tip-box, .code-block { page-break-inside: avoid; }
+@page { size: A4; margin: 2cm; }
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5; color: #1a1a2e; line-height: 1.6; }
+.book-container { max-width: 1100px; margin: 0 auto; background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+.cover { background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #1d3b5e 100%); color: white; padding: 80px 60px; text-align: center; border-radius: 0; position: relative; overflow: hidden; }
+.cover h1 { font-size: 46px; margin-bottom: 20px; letter-spacing: -0.5px; }
+.cover .subtitle { font-size: 22px; margin-bottom: 30px; opacity: 0.9; }
+.cover .tagline { font-size: 18px; border-top: 1px solid rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.3); display: inline-block; padding: 12px 24px; margin: 30px auto; }
+.cover .meta { margin-top: 50px; font-size: 14px; opacity: 0.7; }
+.cover .ca { background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; font-family: monospace; font-size: 12px; word-break: break-all; }
+.toc { padding: 40px 50px; background: #f8f9fa; }
+.toc h2 { font-size: 28px; margin-bottom: 20px; color: #1a1a2e; border-left: 4px solid #9d4edd; padding-left: 16px; }
+.toc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; }
+.toc-item { padding: 8px 0; border-bottom: 1px solid #e0e0e0; font-size: 16px; }
+.chapter { padding: 40px 50px; border-bottom: 1px solid #eee; }
+.chapter-title { font-size: 32px; margin-bottom: 20px; color: #1a0a2e; border-left: 4px solid #9d4edd; padding-left: 20px; }
+.section-title { font-size: 24px; margin: 30px 0 15px 0; color: #2d1b4e; }
+.subsection-title { font-size: 20px; margin: 25px 0 12px 0; color: #3d2b5e; }
+p { margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+th, td { border: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: top; }
+th { background: #1a0a2e; color: white; font-weight: 600; }
+tr:nth-child(even) { background: #f9f9f9; }
+.info-card { background: #f0e6f6; border-left: 4px solid #9d4edd; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+.warning-card { background: #fff3e0; border-left: 4px solid #ff9800; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+.danger-card { background: #ffeaea; border-left: 4px solid #e63946; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+.tip-card { background: #e6f0e6; border-left: 4px solid #00d4aa; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+.code-block { background: #1e1e2e; color: #e0e0e0; padding: 16px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 13px; overflow-x: auto; margin: 20px 0; }
+ul, ol { margin: 15px 0 15px 30px; }
+li { margin: 8px 0; }
+.footer { background: #1a0a2e; color: white; padding: 30px 50px; text-align: center; font-size: 12px; }
+.quote { font-style: italic; border-left: 3px solid #9d4edd; padding-left: 20px; margin: 20px 0; color: #555; font-size: 16px; }
+hr { margin: 30px 0; border: none; height: 1px; background: linear-gradient(to right, #ccc, transparent); }
+.premium-badge { display: inline-block; background: linear-gradient(135deg, #9d4edd, #c77dff); color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-left: 10px; }
+@media (max-width: 768px) {
+.cover h1 { font-size: 32px; }
+.cover .subtitle { font-size: 18px; }
+.chapter, .toc, .cover { padding: 30px 20px; }
+.toc-grid { grid-template-columns: 1fr; }
+table { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="book-container">
+
+<!-- 封面 -->
+<div class="cover">
+<h1>WEB3 & WEB4<br>终极指南</h1>
+<div class="subtitle">How ordinary people transcend social classes<br>through decentralized technology & AI</div>
+<div class="tagline">— 2026 Edition Web2 进阶版 —</div>
+<div class="meta">
+<strong>2026 Edition — 收费阅读 + 打赏支持</strong><br><br>
+<div class="ca">EACO CA (Solana): DqfoyZH96RnvZusSp3Cdncjpyp3C74ZmJzGhjmHnDHRH</div>
+<br>主编联系: eaco2cc@gmail.com<br>
+支持 16+ 种语言 | 每周 & 每月自动更新
+</div>
+</div>
+
+<!-- 目录 -->
+<div class="toc">
+<h2>目录 <span class="premium-badge">PREMIUM</span></h2>
+<div class="toc-grid">
+<div class="toc-item">序章：Web3 + Web4 双引擎时代</div>
+<div class="toc-item">第 1 章：跨越阶层——从"无产"到"节点"</div>
+<div class="toc-item">第 2 章：Web3 核心概念详解</div>
+<div class="toc-item">AI Tools 章节：全球十大免费 AI 平台</div>
+<div class="toc-item">第 3 章：Solana 生态深度探索</div>
+<div class="toc-item">第 4 章：Web4 AI Agent 经济</div>
+<div class="toc-item">第 5 章：DePIN 与 RWA</div>
+<div class="toc-item">第 6 章：全球就业与自由</div>
+<div class="toc-item">EACO 案例研究扩展版</div>
+<div class="toc-item">第 7 章：安全与风险管理</div>
+<div class="toc-item">全书结语</div>
+<div class="toc-item">附录：自动化更新说明</div>
+</div>
+</div>
+
+<!-- 序章 -->
+<div class="chapter">
+<h1 class="chapter-title">序章：Web3 + Web4 双引擎时代</h1>
+<h2 class="section-title">写给每一个在海外奋斗的你</h2>
+<p>无论你是因为留学、工作、移民，还是为了寻找新机会而身处异国他乡，你一定感受过这些困境：身份困境、汇款困境、就业困境、资产困境。这些问题，本质上是因为：<strong>你在这个世界上，没有一个真正属于自己、不受第三方控制的"数字身份"和"数字资产"</strong>。Web3 要解决的，恰恰就是这个根本问题。</p>
+
+<h2 class="section-title">互联网代际简史：你正处于哪个时代？</h2>
+<table>
+<thead><tr><th>时代</th><th>核心特征</th><th>你的角色</th><th>赚钱的人</th></tr></thead>
+<tbody>
+<tr><td>Web1（1990s–2000s）</td><td>只读</td><td>观众</td><td>门户网站</td></tr>
+<tr><td>Web2（2010s–2020s）</td><td>读写</td><td>用户/产品</td><td>平台</td></tr>
+<tr><td>Web3（2020s–）</td><td>拥有</td><td>所有者/股东</td><td>你（如果你持有代币）</td></tr>
+<tr><td>Web4（未来5–10年）</td><td>AI 代理</td><td>指挥官</td><td>你 + 你的 AI Agent</td></tr>
+</tbody>
+</table>
+
+<div class="tip-card">
+<strong>✨ 关键转变：</strong> 在 Web3 之前，你贡献数据、注意力、内容，平台拿走利润。在 Web3 之后，你贡献同样的一切，但如果你持有代币，你就分润。这就是普通人最后的上升电梯。
+</div>
+
+<h2 class="section-title">为什么选择 Solana？</h2>
+<p>Solana 的速度（65,000+ TPS）和极低费用（$0.0002–0.001/笔），让普通人可以用极低成本反复练习链上操作——这是跨越阶层最重要的"训练场"。</p>
+
+<h2 class="section-title">EACO：本书的实战案例</h2>
+<p><strong>EACO（$eaco）</strong> 是 Solana 链上的社区代币，定位为"地球村民的数字纽带"。CA：<code>DqfoyZH96RnvZusSp3Cdncjpyp3C74ZmJzGhjmHnDHRH</code>。本书将以 EACO 作为贯穿全文的实操案例。</p>
+<div class="warning-card">⚠️ 免责声明：本书所有 EACO 相关内容均为案例教学目的，不构成任何投资建议。请自行研究（DYOR）。</div>
+</div>
+
+<!-- 第1章 -->
+<div class="chapter">
+<h1 class="chapter-title">第1章：跨越阶层——从"无产"到"节点"</h1>
+<h2 class="section-title">1.1 阶层跨越的本质：不是运气，是路径</h2>
+<p>阶层跨越 = 完整走一遍从0到1的加密公民成长路径：新手期（突破心理门槛）→ 交互期（建立链上足迹）→ 贡献期（成为 builder）→ 节点期（拥有治理权）。</p>
+
+<h2 class="section-title">1.2 三层心态重塑</h2>
+<ul>
+<li><strong>从消费者到所有者</strong>：你持有代币 → 你分润</li>
+<li><strong>从被动到主动</strong>：早期参与才有超额收益</li>
+<li><strong>从孤狼到共识</strong>：找到社区并成为早期贡献者</li>
+</ul>
+
+<h2 class="section-title">1.3 EACO 案例：如何用一颗代币走完阶层跨越的完整路径</h2>
+<table>
+<thead><tr><th>阶段</th><th>具体行动</th><th>跨越的壁垒</th></tr></thead>
+<tbody>
+<tr><td>新手期</td><td>用 10–50 USDC 购买 EACO，加入社群</td><td>破除心理门槛</td></tr>
+<tr><td>交互期</td><td>每周转账、Swap、打赏</td><td>熟悉链上操作</td></tr>
+<tr><td>贡献期</td><td>制作 meme、翻译文档、邀请真实用户</td><td>从散户变 builder</td></tr>
+<tr><td>节点期</td><td>参与社区投票/治理</td><td>拥有治理权</td></tr>
+</tbody>
+</table>
+<div class="quote">"跨越阶层的本质，不是'买对一次百倍币'，而是'通过一个项目完整走完从0到1的加密公民成长路径'。"</div>
+</div>
+
+<!-- 第2章 -->
+<div class="chapter">
+<h1 class="chapter-title">第2章：Web3 核心概念详解</h1>
+<h2 class="section-title">2.1 钱包：你的数字身份</h2>
+<p>公钥 = 银行卡号，私钥 = 密码，助记词 = 母钥匙。Solana 推荐钱包：Phantom、Backpack、Solflare。</p>
+<div class="danger-card"><strong>❌ 绝对不要：</strong> 把私钥/助记词告诉任何人、存在云端、点击不明链接。✅ 必须做：手写备份助记词、使用硬件钱包、交易前验证合约。</div>
+
+<h2 class="section-title">2.2 DEX：去中心化交易所</h2>
+<p>Jupiter 是 Solana 上最推荐的聚合器。购买 EACO 步骤：打开 jup.ag → 连接钱包 → 粘贴 CA → 确认交易。</p>
+
+<h2 class="section-title">2.3 你必须知道的 5 种骗局</h2>
+<ul>
+<li><strong>貔貅</strong>：只能买不能卖 → 用 RugCheck.xyz 检查</li>
+<li><strong>空投钓鱼</strong>：假链接盗币 → 只认官方来源</li>
+<li><strong>授权盗币</strong>：定期用 Revoke.cash 撤销授权</li>
+<li><strong>假客服</strong>：官方永不主动私聊</li>
+<li><strong>仿冒代币</strong>：从官方渠道复制 CA</li>
+</ul>
+</div>
+
+<!-- AI Tools 章节 -->
+<div class="chapter">
+<h1 class="chapter-title">AI Tools 章节：全球十大免费 AI 平台整合</h1>
+<p>Web4 的核心是 AI + Web3。以下是 10 个提供免费额度的全球顶级 AI 平台：</p>
+<table>
+<thead><tr><th>平台</th><th>适合用途</th><th>免费额度</th><th>推荐指数</th></tr></thead>
+<tbody>
+<tr><td>ChatGPT</td><td>通用 AI 助手</td><td>GPT-3.5 无限</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr><td>Claude</td><td>长文本阅读</td><td>20-50 条/天</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr><td>Perplexity</td><td>带引用的搜索</td><td>完全免费</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr><td>Leonardo.ai</td><td>图片生成</td><td>150 积分/天</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td>Runway ML</td><td>视频生成</td><td>125 积分</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td>Hugging Face</td><td>开源模型</td><td>无限</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr><td>Replit</td><td>在线写代码</td><td>基础免费</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td>Colab</td><td>运行 Python</td><td>免费 GPU</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td>Poe</td><td>多模型聚合</td><td>3000 积分/天</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td>Coze/扣子</td><td>AI Agent 构建</td><td>免费额度充足</td><td>⭐⭐⭐⭐⭐</td></tr>
+</tbody>
+</table>
+
+<div class="info-card">
+<strong>💡 Web4 思维：</strong> 不要只把 AI 当聊天工具。学会用 AI 生成内容、分析数据、自动化工作流——这就是 Web4 的"指挥官"思维。
+</div>
+</div>
+
+<!-- 第3章 -->
+<div class="chapter">
+<h1 class="chapter-title">第3章：Solana 生态深度探索</h1>
+<h2 class="section-title">3.1 Solana 生态全景图</h2>
+<table>
+<thead><tr><th>类别</th><th>代表项目</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td>钱包</td><td>Phantom, Backpack, Solflare</td><td>存储和管理资产</td></tr>
+<tr><td>DEX</td><td>Jupiter, Raydium, Orca</td><td>代币交易</td></tr>
+<tr><td>NFT</td><td>Tensor, Magic Eden</td><td>NFT 交易</td></tr>
+<tr><td>DePIN</td><td>Grass, Helium, Hivemapper</td><td>共享资源赚收益</td></tr>
+<tr><td>Meme</td><td>WIF, BONK, EACO</td><td>社区代币</td></tr>
+<tr><td>LSD</td><td>Jito, Marinade</td><td>流动性质押</td></tr>
+<tr><td>衍生品</td><td>Drift, Mango</td><td>合约交易</td></tr>
+</tbody>
+</table>
+
+<h2 class="section-title">3.2 最适合新手的 DePIN 项目</h2>
+<ul>
+<li><strong>Grass</strong>：闲置带宽挖矿，5分钟设置，月收益 $10-30</li>
+<li><strong>Nodepay</strong>：与 Grass 双挖不冲突</li>
+<li><strong>Helium Mobile</strong>：手机热点挖矿</li>
+<li><strong>Hivemapper</strong>：行车记录仪挖地图数据</li>
+</ul>
+
+<div class="tip-card">
+<strong>✅ DePIN 入门建议：</strong> 从 Grass 开始，只需安装浏览器插件，零成本启动。熟悉后再扩展其他项目。
+</div>
+
+<h2 class="section-title">3.3 Solana 质押指南</h2>
+<ol>
+<li>在 Phantom 钱包中选择"Stake"</li>
+<li>选择验证节点（推荐 Jito 或 Marinade）</li>
+<li>输入质押数量（最少 0.01 SOL）</li>
+<li>确认并等待生效（约 2-3 天）</li>
+<li>年化收益约 6-8%</li>
+</ol>
+</div>
+
+<!-- 第4章 -->
+<div class="chapter">
+<h1 class="chapter-title">第4章：Web4 AI Agent 经济</h1>
+<h2 class="section-title">4.1 什么是 AI Agent？</h2>
+<p><strong>AI Agent</strong> = 能够自主执行任务的 AI 程序。全球活跃 AI Agent 数量已达 <strong>135,248+</strong>，月增长率 23%。</p>
+
+<div class="info-card">
+<strong>💡 一个例子：</strong> 传统 AI 回答问题，AI Agent 可以自动监控价格、执行交易、发送通知——这是 Web4 的核心能力。
+</div>
+
+<h2 class="section-title">4.2 AI Agent 的三种级别</h2>
+<table>
+<thead><tr><th>级别</th><th>能力</th><th>工具</th></tr></thead>
+<tbody>
+<tr><td>Level 1: 聊天</td><td>回答问题、生成内容</td><td>ChatGPT, Claude</td></tr>
+<tr><td>Level 2: 工作流</td><td>自动执行多步骤任务</td><td>Coze, Dify, n8n</td></tr>
+<tr><td>Level 3: 自主</td><td>自主决策、链上交互</td><td>AutoGPT, BabyAGI</td></tr>
+</tbody>
+</table>
+
+<h2 class="section-title">4.3 普通人如何拥有自己的 AI Agent？</h2>
+<ul>
+<li><strong>零代码</strong>：Coze/扣子、Dify、n8n 搭建工作流</li>
+<li><strong>低代码</strong>：LangChain + API 集成</li>
+<li><strong>全代码</strong>：Python + Solana Web3.js 开发</li>
+<li><strong>EACO 社区</strong>：即将推出价格监控机器人和社区新闻聚合器</li>
+</ul>
+
+<h2 class="section-title">4.4 AI Agent + Crypto 的商业模式</h2>
+<ol>
+<li><strong>交易机器人</strong>：自动套利、跟单交易</li>
+<li><strong>内容生成</strong>：自动发布市场分析、新闻摘要</li>
+<li><strong>社区管理</strong>：自动回复、筛选信息、发布公告</li>
+<li><strong>数据分析</strong>：链上数据监控、异常预警</li>
+</ol>
+
+<div class="tip-card">
+<strong>🚀 机会提示：</strong> AI Agent 操作员是 2026 年最热门的新兴岗位之一。现在学习，抢占先机。
+</div>
+</div>
+
+<!-- 第5章 -->
+<div class="chapter">
+<h1 class="chapter-title">第5章：DePIN 与 RWA——现实世界与区块链的桥梁</h1>
+<h2 class="section-title">5.1 DePIN：用代币激励普通人贡献硬件资源</h2>
+<p>DePIN（去中心化物理基础设施网络）让普通人可以通过贡献闲置资源获得代币奖励：</p>
+<table>
+<thead><tr><th>项目</th><th>贡献资源</th><th>收益方式</th><th>入门难度</th></tr></thead>
+<tbody>
+<tr><td>Grass</td><td>闲置带宽</td><td>积分换代币</td><td>⭐ 极简</td></tr>
+<tr><td>Helium</td><td>无线热点</td><td>HNT 代币</td><td>⭐⭐ 简单</td></tr>
+<tr><td>Hivemapper</td><td>行车数据</td><td>HONEY 代币</td><td>⭐⭐ 简单</td></tr>
+<tr><td>Render</td><td>GPU 算力</td><td>RNDR 代币</td><td>⭐⭐⭐ 中等</td></tr>
+<tr><td>Filecoin</td><td>存储空间</td><td>FIL 代币</td><td>⭐⭐⭐ 中等</td></tr>
+</tbody>
+</table>
+
+<h2 class="section-title">5.2 RWA：把现实资产搬上链</h2>
+<p>RWA（现实世界资产代币化）让普通人可以用小额资金参与原本被机构和富人垄断的领域：</p>
+<ul>
+<li><strong>Ondo</strong>：美国国债代币化，4-5% APY</li>
+<li><strong>Parcl</strong>：房地产指数代币化</li>
+<li><strong>Centrifuge</strong>：企业应收账款代币化</li>
+<li><strong>Maple</strong>：机构级借贷市场</li>
+</ul>
+
+<div class="info-card">
+<strong>💡 RWA 的意义：</strong> 用 $10 投资美国国债、房地产、企业债——这在传统金融中是不可能的。
+</div>
+</div>
+
+<!-- 第6章 -->
+<div class="chapter">
+<h1 class="chapter-title">第6章：全球就业与自由——Web3 时代的工作革命</h1>
+<h2 class="section-title">6.1 Web3 职业矩阵</h2>
+<table>
+<thead><tr><th>岗位</th><th>技能要求</th><th>月收入范围</th><th>入门难度</th></tr></thead>
+<tbody>
+<tr><td>智能合约开发</td><td>Rust/Solidity</td><td>$5,000–20,000+</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr><td>社区运营</td><td>多语言、社区管理</td><td>$1,000–5,000</td><td>⭐⭐</td></tr>
+<tr><td>链上数据分析</td><td>SQL、Dune</td><td>$3,000–8,000</td><td>⭐⭐⭐</td></tr>
+<tr><td>AI Agent 操作员</td><td>Prompt Engineering</td><td>$2,000–10,000</td><td>⭐⭐</td></tr>
+<tr><td>内容创作者</td><td>写作、视频制作</td><td>$500–3,000</td><td>⭐</td></tr>
+<tr><td>翻译/本地化</td><td>多语言能力</td><td>$500–2,000</td><td>⭐</td></tr>
+</tbody>
+</table>
+
+<h2 class="section-title">6.2 在哪里找到 Web3 工作？</h2>
+<ul>
+<li><strong>Bondex</strong>：Web3 专业招聘平台</li>
+<li><strong>CryptoJobs</strong>：加密货币行业职位</li>
+<li><strong>Layer3</strong>：任务型赚钱平台</li>
+<li><strong>Galxe</strong>：任务和空投平台</li>
+<li><strong>EACO 社区</strong>：内部持续需要翻译、Mod、内容创作者</li>
+</ul>
+
+<div class="info-card">
+<strong>💡 核心逻辑：</strong> 在 Web3 世界，你的钱包地址就是你的简历。链上凭证无法伪造。
+</div>
+
+<h2 class="section-title">6.3 数字游民生活方式</h2>
+<p>Web3 让你可以：</p>
+<ul>
+<li>用加密货币接收全球付款，无需银行账户</li>
+<li>参与全球 DAO 治理，不受地域限制</li>
+<li>通过 DeFi 获得被动收入</li>
+<li>用 AI Agent 自动化工作流</li>
+</ul>
+</div>
+
+<!-- EACO 案例研究 -->
+<div class="chapter">
+<h1 class="chapter-title">EACO 案例研究扩展版</h1>
+<h2 class="section-title">案例 1：从 0 到社区节点的完整路径</h2>
+<p><strong>小王</strong>（留学生）：第1周买入 $10 EACO → 第2周加入社区 → 第3周翻译公告 → 第2个月制作 meme → 第6个月参与治理。投入：$10 + 每周2-3小时，收获：完整 Web3 技能 + 社区人脉 + 治理权。</p>
+
+<h2 class="section-title">案例 2：跨语言社区建设者</h2>
+<p><strong>Maria</strong>（西班牙）：建立西班牙语 TG 群，3 个月增长到 500+ 活跃用户，获得社区激励代币和管理员身份。</p>
+
+<h2 class="section-title">案例 3：AI Agent 先行者</h2>
+<p><strong>Alex</strong>（程序员）：用 ChatGPT 写了 EACO 价格监控机器人，免费分享给社区，被邀请参与底层开发，最终获得 AI Agent 创业公司职位。</p>
+
+<h2 class="section-title">案例 4：DePIN 收益组合</h2>
+<p><strong>小李</strong>（上班族）：同时运行 Grass + Nodepay + Helium Mobile，每月被动收入 $50-80，覆盖部分生活开支。</p>
+</div>
+
+<!-- 第7章 -->
+<div class="chapter">
+<h1 class="chapter-title">第7章：安全与风险管理</h1>
+<div class="quote">"Not your keys, not your coins." 不是你的私钥，就不是你的币。</div>
+
+<h2 class="section-title">7.1 安全工具清单</h2>
+<ul>
+<li><strong>RugCheck.xyz</strong>：检查代币安全</li>
+<li><strong>Solscan</strong>：验证合约地址</li>
+<li><strong>Revoke.cash</strong>：撤销钱包授权</li>
+<li><strong>DexScreener</strong>：查看流动性和交易量</li>
+<li><strong>Blowfish</strong>：交易前风险扫描</li>
+</ul>
+
+<h2 class="section-title">7.2 资产安全策略</h2>
+<table>
+<thead><tr><th>资产规模</th><th>存储方案</th><th>工具</th></tr></thead>
+<tbody>
+<tr><td>$0-500</td><td>软件钱包</td><td>Phantom, 助记词手写备份</td></tr>
+<tr><td>$500-5,000</td><td>软件钱包 + 多签</td><td>Squads, 2-of-3 多签</td></tr>
+<tr><td>$5,000+</td><td>硬件钱包</td><td>Ledger, Trezor</td></tr>
+<tr><td>$50,000+</td><td>硬件钱包 + 多签 + 保险</td><td>Ledger + Squads + Nexus Mutual</td></tr>
+</tbody>
+</table>
+
+<div class="tip-card">
+<strong>✅ 每次交易前检查清单：</strong>
+<ol>
+<li>合约地址来自官方渠道？</li>
+<li>RugCheck 评分通过？</li>
+<li>小额测试交易成功？</li>
+<li>网站拼写正确？</li>
+<li>授权范围合理？</li>
+</ol>
+</div>
+</div>
+
+<!-- 结语 -->
+<div class="chapter">
+<h1 class="chapter-title">全书结语</h1>
+<div class="quote">
+"阶层跨越不是赌一个百倍币，而是完整走一遍从'链上小白'到'社区节点'的成长路径。EACO 是你走这条路的第一个训练场，Solana 是你的高速公路，Web4 是你未来的引擎。现在，关上这本书，打开你的钱包，开始你的第一笔链上交易。"
+</div>
+<p style="margin-top: 30px;"><strong>—— EACO 社区 & 本书编者</strong><br>2026 Edition | 持续更新中</p>
+</div>
+
+<!-- 附录 -->
+<div class="chapter">
+<h1 class="chapter-title">附录：自动化更新说明</h1>
+<h2 class="section-title">如何获取自动更新</h2>
+<ul>
+<li>订阅每周更新：发送邮件至 <strong>eaco2cc@gmail.com</strong>，标题 <code>SUBSCRIBE WEEKLY</code></li>
+<li>成为贡献者：标题 <code>CONTRIBUTOR</code>，投稿 Web3/4 技能文章</li>
+<li>加入社区：获取最新动态和内部资料</li>
+</ul>
+
+<h2 class="section-title">更新频率</h2>
+<ul>
+<li><strong>每周：</strong> 1 篇最新技术文章 + 链上工具教程 + 安全提醒</li>
+<li><strong>每月：</strong> Solana 交互排行榜 + AI + Crypto 月度趋势 + EACO 动态摘要</li>
+</ul>
+
+<div class="info-card">
+<strong>📧 主编联系：</strong> eaco2cc@gmail.com<br>
+<strong>EACO CA（Solana）：</strong> DqfoyZH96RnvZusSp3Cdncjpyp3C74ZmJzGhjmHnDHRH<br>
+<strong>Agent World：</strong> https://world.coze.site/skill.md
+</div>
+</div>
+
+<!-- 页脚 -->
+<div class="footer">
+<p>© 2026 EACO. All rights reserved.</p>
+<p>WEB3 & WEB4 Ultimate Guide - 2026 Edition (Web2 进阶版)</p>
+<p style="margin-top: 10px;">EACO ($eaco) — Earth's Best WEB3+AI+RWA Coin<br>CA: DqfoyZH96RnvZusSp3Cdncjpyp3C74ZmJzGhjmHnDHRH</p>
+<p style="margin-top: 10px;">打赏支持: SOL-8jpA6mfoZvdbQA1tMqWZyQnsn3CqtRfjeaXPArt4uhNE | EVM-0xedba2da577942bff3ca03bcb88b0190a3dbeef94</p>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-05-14T09:00:01.147645+08:00",
+  "total_registered": 8,
+  "verified_agents": 8,
+  "match_id": "match_1777000323458",
+  "wallet": "3uVyRjzLnJ6MumYaQ7oMt5jPVPBGKFUeGgqkzwh5Uw6N",
+  "settlement_time": "Every Monday 02:00 Beijing Time",
+  "is_settlement_day": false,
+  "days_until_settlement": 4,
+  "agents": [
+    {
+      "name": "eaco-global",
+      "agent_id": "f649c870-99cd-4e9a-8223-8a8a06520094",
+      "verified": true,
+      "registered_at": "2026-05-09T07:35:52+08:00"
+    },
+    {
+      "name": "eaco-europe-1",
+      "agent_id": "83004dd1-b542-427a-a747-6eb3ef306fc5",
+      "verified": true,
+      "registered_at": "2026-05-11T08:30:00+08:00"
+    },
+    {
+      "name": "eaco-asia-1",
+      "agent_id": "25c0f24e-d126-43d6-84ab-6942b815843b",
+      "verified": true,
+      "registered_at": "2026-05-11T08:30:00+08:00"
+    },
+    {
+      "name": "eaco-americas-1",
+      "agent_id": "369b608d-044c-4f64-9ca8-a5e5dc2829b5",
+      "verified": true,
+      "registered_at": "2026-05-11T08:30:00+08:00"
+    },
+    {
+      "name": "eaco-mena-1",
+      "agent_id": "12a18c23-f872-4690-b29a-5f0ff92a0655",
+      "verified": true,
+      "registered_at": "2026-05-11T08:30:00+08:00"
+    },
+    {
+      "name": "eaco-southeast-1",
+      "agent_id": "f00596e3-7058-49f3-96a7-bf1691d58269",
+      "verified": true,
+      "registered_at": "2026-05-11T08:30:00+08:00"
+    },
+    {
+      "name": "eaco-south-asia-1",
+      "agent_id": "dae03977-6d26-4d39-a27d-d3c116670eb7",
+      "verified": true,
+      "registered_at": "2026-05-11T08:30:00+08:00"
+    },
+    {
+      "name": "eaco-east-asia-1",
+      "agent_id": "dadbc813-9286-4af1-b9f0-b23b07cac3fc",
+      "verified": true,
+      "registered_at": "2026-05-11T08:30:00+08:00"
+    }
+  ]
+}

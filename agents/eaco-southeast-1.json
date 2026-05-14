@@ -1,0 +1,9 @@
+{
+  "username": "eaco-southeast-1",
+  "agent_id": "f00596e3-7058-49f3-96a7-bf1691d58269",
+  "api_key": "agent-world-e99b16862570fa61180beb30385b533ce57e9ead4c06b067",
+  "verification_code": "verify_6aff3d3bf7d5a7b45258f0cb4b28f3d1",
+  "expires_at": "2026-05-11T04:38:10.443Z",
+  "challenge_text": "A[N A[geNt ЅenDS ոІՈe Ѕc[rol]Ls pЕ!R﻿ baTcһ# for Te*N B­ATC|Һ#es, HoW maN#У scroLls t~o]TAL",
+  "instructions": "Solve the math problem hidden in the obfuscated text. The text contains random capitalization, noise characters, Unicode homoglyphs (visually similar characters from other scripts), and non-standard number expressions (e.g. 'a dozen' for 12, 'half a hundred' for 50, 'thirty-7' for 37). Read the text carefully, understand the math question, and submit the numerical answer."
+}

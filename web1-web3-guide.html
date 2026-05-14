@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEB3 Ultimate Guide - 2026 Edition (Web1 免费版)</title>
+<style>
+@media print {
+body { margin: 0; padding: 0; background: white; }
+.page-break { page-break-before: always; }
+.no-break { page-break-inside: avoid; }
+h1, h2, h3, h4 { page-break-after: avoid; }
+table, figure, .card, .warning-box, .tip-box, .code-block { page-break-inside: avoid; }
+@page { size: A4; margin: 2cm; }
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5; color: #1a1a2e; line-height: 1.6; }
+.book-container { max-width: 1100px; margin: 0 auto; background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+.cover { background: linear-gradient(135deg, #0b0f2a 0%, #1a1a3e 50%, #0d2b3e 100%); color: white; padding: 80px 60px; text-align: center; border-radius: 0; position: relative; overflow: hidden; }
+.cover h1 { font-size: 48px; margin-bottom: 20px; letter-spacing: -0.5px; }
+.cover .subtitle { font-size: 24px; margin-bottom: 30px; opacity: 0.9; }
+.cover .tagline { font-size: 18px; border-top: 1px solid rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.3); display: inline-block; padding: 12px 24px; margin: 30px auto; }
+.cover .meta { margin-top: 50px; font-size: 14px; opacity: 0.7; }
+.cover .ca { background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; font-family: monospace; font-size: 12px; word-break: break-all; }
+.toc { padding: 40px 50px; background: #f8f9fa; }
+.toc h2 { font-size: 28px; margin-bottom: 20px; color: #1a1a2e; border-left: 4px solid #00d4aa; padding-left: 16px; }
+.toc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; }
+.toc-item { padding: 8px 0; border-bottom: 1px solid #e0e0e0; font-size: 16px; }
+.chapter { padding: 40px 50px; border-bottom: 1px solid #eee; }
+.chapter-title { font-size: 32px; margin-bottom: 20px; color: #0b0f2a; border-left: 4px solid #00d4aa; padding-left: 20px; }
+.section-title { font-size: 24px; margin: 30px 0 15px 0; color: #1a1a3e; }
+.subsection-title { font-size: 20px; margin: 25px 0 12px 0; color: #2c2c54; }
+p { margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+th, td { border: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: top; }
+th { background: #0b0f2a; color: white; font-weight: 600; }
+tr:nth-child(even) { background: #f9f9f9; }
+.info-card { background: #e8f4f8; border-left: 4px solid #00b4d8; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+.warning-card { background: #fff3e0; border-left: 4px solid #ff9800; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+.danger-card { background: #ffeaea; border-left: 4px solid #e63946; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+.tip-card { background: #e0f7e8; border-left: 4px solid #00d4aa; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+.code-block { background: #1e1e2e; color: #e0e0e0; padding: 16px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 13px; overflow-x: auto; margin: 20px 0; }
+ul, ol { margin: 15px 0 15px 30px; }
+li { margin: 8px 0; }
+.footer { background: #0b0f2a; color: white; padding: 30px 50px; text-align: center; font-size: 12px; }
+.quote { font-style: italic; border-left: 3px solid #00d4aa; padding-left: 20px; margin: 20px 0; color: #555; font-size: 16px; }
+hr { margin: 30px 0; border: none; height: 1px; background: linear-gradient(to right, #ccc, transparent); }
+@media (max-width: 768px) {
+.cover h1 { font-size: 32px; }
+.cover .subtitle { font-size: 18px; }
+.chapter, .toc, .cover { padding: 30px 20px; }
+.toc-grid { grid-template-columns: 1fr; }
+table { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="book-container">
+
+<!-- 封面 -->
+<div class="cover">
+<h1>WEB3<br>终极指南</h1>
+<div class="subtitle">How ordinary people transcend social classes<br>through decentralized technology</div>
+<div class="tagline">— 2026 Edition Web1 免费版 —</div>
+<div class="meta">
+<strong>2026 Edition — 免费阅读</strong><br><br>
+<div class="ca">EACO CA (Solana): DqfoyZH96RnvZusSp3Cdncjpyp3C74ZmJzGhjmHnDHRH</div>
+<br>主编联系: eaco2cc@gmail.com<br>
+支持 16+ 种语言 | 每周自动更新
+</div>
+</div>
+
+<!-- 目录 -->
+<div class="toc">
+<h2>目录</h2>
+<div class="toc-grid">
+<div class="toc-item">序章：为什么是 Web3？</div>
+<div class="toc-item">第 1 章：Web3 核心概念</div>
+<div class="toc-item">第 2 章：钱包与数字身份</div>
+<div class="toc-item">第 3 章：DEX 与代币交易</div>
+<div class="toc-item">第 4 章：安全防范指南</div>
+<div class="toc-item">第 5 章：Solana 生态入门</div>
+<div class="toc-item">结语与进阶路径</div>
+</div>
+</div>
+
+<!-- 序章 -->
+<div class="chapter">
+<h1 class="chapter-title">序章：为什么是 Web3？</h1>
+<h2 class="section-title">写给每一个想要掌握数字主权的人</h2>
+<p>在这个数字时代，你的数据、身份、资产都被中心化平台控制。Web3 的核心承诺是：<strong>让个人重新掌握自己的数字主权</strong>。</p>
+
+<h2 class="section-title">互联网代际简史</h2>
+<table>
+<thead><tr><th>时代</th><th>核心特征</th><th>你的角色</th><th>价值归属</th></tr></thead>
+<tbody>
+<tr><td>Web1（1990s–2000s）</td><td>只读</td><td>观众</td><td>平台</td></tr>
+<tr><td>Web2（2010s–2020s）</td><td>读写</td><td>用户/产品</td><td>平台</td></tr>
+<tr><td>Web3（2020s–）</td><td>拥有</td><td>所有者</td><td>你</td></tr>
+</tbody>
+</table>
+
+<div class="tip-card">
+<strong>✨ 关键转变：</strong> 在 Web3 中，你贡献数据、注意力、内容，同时通过代币持有权分享平台增长的价值。
+</div>
+
+<h2 class="section-title">为什么选择 Solana？</h2>
+<p>Solana 的速度（65,000+ TPS）和极低费用（$0.0002–0.001/笔），让普通人可以用极低成本学习和实践链上操作。</p>
+
+<h2 class="section-title">EACO：本书的实战案例</h2>
+<p><strong>EACO（$eaco）</strong> 是 Solana 链上的社区代币，定位为"地球村民的数字纽带"。本书将以 EACO 作为贯穿全文的实操案例。</p>
+<div class="warning-card">⚠️ 免责声明：本书所有内容均为教育目的，不构成投资建议。请自行研究（DYOR）。</div>
+</div>
+
+<!-- 第1章 -->
+<div class="chapter">
+<h1 class="chapter-title">第1章：Web3 核心概念</h1>
+<h2 class="section-title">1.1 什么是区块链？</h2>
+<p>区块链是一个分布式账本，记录所有交易且不可篡改。想象一本公开的账本，所有人都可以查看，但没有人可以单独修改。</p>
+
+<h2 class="section-title">1.2 什么是加密货币？</h2>
+<p>加密货币是区块链上的数字资产。比特币（BTC）是数字黄金，以太坊（ETH）是智能合约平台，Solana（SOL）是高性能公链。</p>
+
+<h2 class="section-title">1.3 什么是智能合约？</h2>
+<p>智能合约是自动执行的程序代码。一旦部署在区块链上，就会按照预设规则自动运行，无需中介。</p>
+
+<h2 class="section-title">1.4 什么是 DeFi？</h2>
+<p>DeFi（去中心化金融）让你在无需银行的情况下：存款生息、借贷、交易、保险。所有操作通过智能合约自动执行。</p>
+
+<div class="info-card">
+<strong>💡 核心概念：</strong> Web3 = 区块链 + 加密货币 + 智能合约 + DeFi + NFT + DAO
+</div>
+</div>
+
+<!-- 第2章 -->
+<div class="chapter">
+<h1 class="chapter-title">第2章：钱包与数字身份</h1>
+<h2 class="section-title">2.1 钱包是什么？</h2>
+<p>Web3 钱包是你的数字身份和资产容器。它包含：</p>
+<ul>
+<li><strong>公钥</strong>：相当于银行卡号，可以公开分享</li>
+<li><strong>私钥</strong>：相当于密码，绝对不能泄露</li>
+<li><strong>助记词</strong>：12或24个单词，是恢复钱包的母钥匙</li>
+</ul>
+
+<h2 class="section-title">2.2 推荐钱包</h2>
+<table>
+<thead><tr><th>钱包</th><th>平台</th><th>特点</th></tr></thead>
+<tbody>
+<tr><td>Phantom</td><td>Solana/EVM</td><td>最流行，用户体验好</td></tr>
+<tr><td>Backpack</td><td>Solana/EVM</td><td>xNFT 支持，适合开发者</td></tr>
+<tr><td>Solflare</td><td>Solana</td><td>功能全面，支持质押</td></tr>
+</tbody>
+</table>
+
+<h2 class="section-title">2.3 创建钱包步骤</h2>
+<ol>
+<li>下载 Phantom App 或浏览器插件</li>
+<li>创建新钱包，保存助记词（手写！）</li>
+<li>设置密码</li>
+<li>备份助记词到安全的地方（不要截图、不要存云端）</li>
+</ol>
+
+<div class="danger-card">
+<strong>❌ 绝对不要：</strong>
+<ul>
+<li>把私钥/助记词告诉任何人</li>
+<li>截图保存助记词</li>
+<li>把助记词存在云端或社交软件</li>
+<li>点击不明链接</li>
+</ul>
+</div>
+</div>
+
+<!-- 第3章 -->
+<div class="chapter">
+<h1 class="chapter-title">第3章：DEX 与代币交易</h1>
+<h2 class="section-title">3.1 什么是 DEX？</h2>
+<p>DEX（去中心化交易所）让你直接在链上交易代币，无需注册账户、无需 KYC。你的资产始终由你自己控制。</p>
+
+<h2 class="section-title">3.2 Jupiter：Solana 最佳 DEX 聚合器</h2>
+<p>Jupiter 是 Solana 上最推荐的 DEX，自动为你找到最佳交易路径。</p>
+
+<h2 class="section-title">3.3 购买 EACO 步骤</h2>
+<ol>
+<li>打开 <a href="https://jup.ag">jup.ag</a></li>
+<li>连接你的 Phantom 钱包</li>
+<li>在"You Pay"选择 USDC 或 SOL</li>
+<li>在"You Receive"粘贴 EACO 合约地址：<code>DqfoyZH96RnvZusSp3Cdncjpyp3C74ZmJzGhjmHnDHRH</code></li>
+<li>确认交易细节</li>
+<li>点击"Swap"并确认钱包签名</li>
+</ol>
+
+<div class="tip-card">
+<strong>✅ 首次交易建议：</strong> 先用小额（$5-10）测试，熟悉流程后再增加金额。
+</div>
+
+<h2 class="section-title">3.4 如何查看代币信息</h2>
+<ul>
+<li><strong>DexScreener</strong>：查看价格、交易量、流动性</li>
+<li><strong>Solscan</strong>：查看链上交易记录</li>
+<li><strong>RugCheck.xyz</strong>：检查代币安全性</li>
+</ul>
+</div>
+
+<!-- 第4章 -->
+<div class="chapter">
+<h1 class="chapter-title">第4章：安全防范指南</h1>
+<h2 class="section-title">4.1 五大常见骗局</h2>
+<table>
+<thead><tr><th>骗局类型</th><th>特征</th><th>防范方法</th></tr></thead>
+<tbody>
+<tr><td>貔貅盘</td><td>只能买不能卖</td><td>RugCheck.xyz 检查</td></tr>
+<tr><td>空投钓鱼</td><td>假链接要求连接钱包</td><td>只认官方来源</td></tr>
+<tr><td>授权盗币</td><td>恶意合约获取转账权限</td><td>定期用 Revoke.cash 撤销</td></tr>
+<tr><td>假客服</td><td>主动私聊索要助记词</td><td>官方永不主动私聊</td></tr>
+<tr><td>仿冒代币</td><td>名称相似但合约不同</td><td>从官方渠道复制 CA</td></tr>
+</tbody>
+</table>
+
+<h2 class="section-title">4.2 安全工具清单</h2>
+<ul>
+<li><strong>RugCheck.xyz</strong>：检查代币合约安全性</li>
+<li><strong>Solscan</strong>：验证合约地址</li>
+<li><strong>Revoke.cash</strong>：撤销钱包授权</li>
+<li><strong>DexScreener</strong>：查看流动性和交易量</li>
+</ul>
+
+<div class="tip-card">
+<strong>✅ 每次交易前检查清单：</strong>
+<ol>
+<li>合约地址来自官方渠道？</li>
+<li>RugCheck 评分通过？</li>
+<li>先小额测试？</li>
+<li>网站拼写正确？</li>
+</ol>
+</div>
+
+<h2 class="section-title">4.3 钱包安全最佳实践</h2>
+<ul>
+<li>使用硬件钱包（Ledger/Trezor）存储大额资产</li>
+<li>创建多个钱包：日常用小钱包，储蓄用冷钱包</li>
+<li>定期检查授权，撤销不用的权限</li>
+<li>关注官方推特获取安全提醒</li>
+</ul>
+</div>
+
+<!-- 第5章 -->
+<div class="chapter">
+<h1 class="chapter-title">第5章：Solana 生态入门</h1>
+<h2 class="section-title">5.1 Solana 生态全景</h2>
+<table>
+<thead><tr><th>类别</th><th>代表项目</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td>钱包</td><td>Phantom, Backpack, Solflare</td><td>存储和管理资产</td></tr>
+<tr><td>DEX</td><td>Jupiter, Raydium, Orca</td><td>代币交易</td></tr>
+<tr><td>NFT</td><td>Tensor, Magic Eden</td><td>NFT 交易</td></tr>
+<tr><td>DePIN</td><td>Grass, Helium</td><td>共享资源赚收益</td></tr>
+<tr><td>Meme</td><td>WIF, BONK, EACO</td><td>社区代币</td></tr>
+</tbody>
+</table>
+
+<h2 class="section-title">5.2 如何参与 Solana 生态</h2>
+<ol>
+<li>创建钱包并存入少量 SOL（用于支付交易费）</li>
+<li>在 Jupiter 体验代币交换</li>
+<li>探索 NFT 市场（Tensor）</li>
+<li>尝试 DePIN 项目（Grass）</li>
+<li>加入社区（Discord/Telegram）</li>
+</ol>
+
+<div class="info-card">
+<strong>💡 入门建议：</strong> 先用 $10-20 体验整个流程，熟悉后再深入。Solana 的低交易费让学习成本极低。
+</div>
+</div>
+
+<!-- 结语 -->
+<div class="chapter">
+<h1 class="chapter-title">结语与进阶路径</h1>
+<div class="quote">
+"Web3 不是一夜暴富的捷径，而是掌握数字主权的必经之路。从创建钱包的第一刻起，你就已经踏上了这条道路。"
+</div>
+
+<h2 class="section-title">进阶学习路径</h2>
+<ol>
+<li><strong>Web2 版</strong>：学习 Web4 AI Agent、DePIN、RWA 等进阶内容</li>
+<li><strong>Web3 版</strong>：掌握 Web5 去中心化身份和完整生态</li>
+<li><strong>实践</strong>：参与社区贡献，从消费者变成建设者</li>
+</ol>
+
+<h2 class="section-title">获取完整版</h2>
+<p>发送邮件至 <strong>eaco2cc@gmail.com</strong>，标题注明所需版本：</p>
+<ul>
+<li><code>GET WEB2 GUIDE</code> - 获取 Web2 版（Web3 + Web4）</li>
+<li><code>GET WEB3 GUIDE</code> - 获取 Web3 版（Web3 + Web4 + Web5）</li>
+<li><code>SUBSCRIBE WEEKLY</code> - 订阅每周更新</li>
+</ul>
+
+<div class="tip-card">
+<strong>🎁 社区福利：</strong> 加入 EACO 社区，参与贡献可获得完整版访问权限和社区激励。
+</div>
+</div>
+
+<!-- 页脚 -->
+<div class="footer">
+<p>© 2026 EACO. All rights reserved.</p>
+<p>WEB3 Ultimate Guide - 2026 Edition (Web1 免费版)</p>
+<p style="margin-top: 10px;">EACO ($eaco) — Earth's Best WEB3+AI+RWA Coin<br>CA: DqfoyZH96RnvZusSp3Cdncjpyp3C74ZmJzGhjmHnDHRH</p>
+<p style="margin-top: 10px;">打赏支持: SOL-8jpA6mfoZvdbQA1tMqWZyQnsn3CqtRfjeaXPArt4uhNE | EVM-0xedba2da577942bff3ca03bcb88b0190a3dbeef94</p>
+</div>
+
+</div>
+</body>
+</html>
