@@ -3,6 +3,7 @@
  * 通过 WebSocket + OCPP 1.6-J 协议与充电桩通信
  */
 const WebSocket = require('ws');
+const EventEmitter = require('events');
 
 class RelayService {
   constructor() {

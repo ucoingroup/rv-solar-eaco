@@ -45,6 +45,7 @@ function getRedis() {
 }
 
 module.exports = {
+  pool: pgPool,      // 别名，兼容控制器 require('../config/database').pool
   pgPool,
   initRedis,
   getRedis

@@ -98,4 +98,4 @@ function WebSocketServiceInit(io) {
   return wsService;
 }
 
-module.exports = { WebSocketServiceInit };
+module.exports = { WebSocketService: WebSocketServiceInit };

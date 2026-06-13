@@ -3,7 +3,6 @@
  */
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-const { RedisClient } = require('../services/websocket');
 
 // 模拟验证码存储（生产环境用Redis）
 const verificationCodes = new Map();

@@ -1,0 +1,47 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Flutter
+flutter/build/
+flutter/.dart_tool/
+flutter/.packages
+flutter/.pub/
+flutter/pubspec.lock
+flutter/.flutter-plugins
+flutter/.flutter-plugins-dependencies
+flutter/coverage/
+flutter/.idea/
+flutter/.vscode/
+flutter/*.iml
+flutter/android/.gradle/
+flutter/android/app/build/
+flutter/ios/Pods/
+flutter/ios/.symlinks/
+flutter/ios/Flutter/Flutter.framework
+flutter/ios/Flutter/Flutter.podspec
+
+# Solana
+solana/target/
+solana/.anchor/
+
+# Rust
+**/target/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
