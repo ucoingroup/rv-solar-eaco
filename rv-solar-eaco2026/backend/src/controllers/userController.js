@@ -1,227 +1,237 @@
 /**
  * 用户控制器
  */
-const { pgPool } = require('../config/database');
-const { getTokenBalance } = require('../services/solanaService');
-const { getUserEnergyRecords, getUserCarbonAccount } = require('../services/rewardService');
+const { pool } = require('../config/database');
+const { SolanaService } = require('../services/solanaService');
 
-/**
- * 获取当前用户信息
- */
-async function getMe(req, res, next) {
+// 获取用户信息
+async function getUserProfile(req, res) {
   try {
-    const user = req.user;
-    
+    const userId = req.user.user_id;
+
+    const [user] = await pool.query(
+      'SELECT id, phone_code, phone_number, level, kyc_status, created_at, wallet_address, total_energy_kwh, total_rewards FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (user.length === 0) {
+      return res.status(404).json({ code: 20001, message: '用户不存在' });
+    }
+
+    // 获取链上余额
+    const balance = await SolanaService.getTokenBalance(user[0].wallet_address);
+
+    // 获取统计数据
+    const [stats] = await pool.query(
+      `SELECT
+        COUNT(*) FILTER (WHERE status = 'completed') as total_charging_sessions,
+        COALESCE(SUM(energy_kwh) FILTER (WHERE status = 'completed'), 0) as total_energy_kwh,
+        COUNT(*) as total_bookings,
+        COUNT(*) FILTER (WHERE status = 'paid') as completed_bookings
+       FROM charging_sessions WHERE user_id = $1`,
+      [userId]
+    );
+
     res.json({
       code: 0,
       message: 'success',
       data: {
-        id: user.id,
-        phone_code: user.phone_code,
-        phone_number: user.phone_number.substring(0, 3) + '****' + user.phone_number.substring(user.phone_number.length - 4),
-        nickname: user.nickname,
-        wallet_address: user.wallet_address,
-        user_level: user.user_level,
-        language: user.language,
-        kyc_status: user.kyc_status,
-        total_energy_kwh: user.total_energy_kwh / 1000,
-        total_reward_eaco: user.total_reward_eaco,
-        created_at: user.created_at
-      }
+        user_id: user[0].id,
+        phone_mask: `${user[0].phone_code}-${user[0].phone_number.slice(0, 3)}****${user[0].phone_number.slice(-4)}`,
+        level: user[0].level,
+        kyc_status: user[0].kyc_status,
+        wallet_address: user[0].wallet_address,
+        eaco_balance: balance,
+        stats: {
+          total_charging_sessions: parseInt(stats[0].total_charging_sessions) || 0,
+          total_energy_kwh: parseFloat(stats[0].total_energy_kwh) || 0,
+          total_bookings: parseInt(stats[0].total_bookings) || 0,
+          completed_bookings: parseInt(stats[0].completed_bookings) || 0,
+        },
+        created_at: user[0].created_at,
+      },
     });
   } catch (error) {
-    next(error);
+    console.error('获取用户信息失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
-/**
- * 更新用户资料
- */
-async function updateMe(req, res, next) {
+// 更新钱包地址
+async function updateWalletAddress(req, res) {
   try {
-    const { nickname, avatar_url, language } = req.body;
-    
-    const updates = [];
-    const values = [];
-    let paramCount = 1;
-    
-    if (nickname !== undefined) {
-      updates.push(`nickname = $${paramCount++}`);
-      values.push(nickname);
+    const userId = req.user.user_id;
+    const { wallet_address, signature } = req.body;
+
+    if (!wallet_address || !signature) {
+      return res.status(400).json({ code: 10001, message: '参数不完整' });
     }
-    if (avatar_url !== undefined) {
-      updates.push(`avatar_url = $${paramCount++}`);
-      values.push(avatar_url);
-    }
-    if (language !== undefined) {
-      updates.push(`language = $${paramCount++}`);
-      values.push(language);
-    }
-    
-    if (updates.length === 0) {
-      return res.status(400).json({
-        code: 10001,
-        message: '没有需要更新的字段'
+
+    await pool.query(
+      'UPDATE users SET wallet_address = $1, updated_at = NOW() WHERE id = $2',
+      [wallet_address, userId]
+    );
+
+    res.json({
+      code: 0,
+      message: '钱包地址已更新',
+      data: { wallet_address },
+    });
+  } catch (error) {
+    console.error('更新钱包地址失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
+  }
+}
+
+// 获取碳积分账户
+async function getCarbonAccount(req, res) {
+  try {
+    const userId = req.user.user_id;
+
+    const [account] = await pool.query(
+      'SELECT * FROM carbon_accounts WHERE user_id = $1',
+      [userId]
+    );
+
+    if (account.length === 0) {
+      const [newAccount] = await pool.query(
+        `INSERT INTO carbon_accounts (user_id, total_co2_kg, available_co2_kg, redeemed_co2_kg)
+         VALUES ($1, 0, 0, 0) RETURNING *`,
+        [userId]
+      );
+      return res.json({
+        code: 0,
+        message: 'success',
+        data: {
+          total_co2_kg: 0,
+          available_co2_kg: 0,
+          redeemed_co2_kg: 0,
+          carbon_nft_count: 0,
+          rank: '🌱 环保新手',
+        },
       });
     }
-    
-    updates.push(`updated_at = NOW()`);
-    values.push(req.userId);
-    
-    const result = await pgPool.query(
-      `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING *`,
-      values
+
+    const [rankResult] = await pool.query(
+      `SELECT COUNT(*) + 1 as rank FROM carbon_accounts
+       WHERE total_co2_kg > (SELECT total_co2_kg FROM carbon_accounts WHERE user_id = $1)`,
+      [userId]
     );
-    
-    const updatedUser = result.rows[0];
-    
-    res.json({
-      code: 0,
-      message: '更新成功',
-      data: {
-        id: updatedUser.id,
-        nickname: updatedUser.nickname,
-        avatar_url: updatedUser.avatar_url,
-        language: updatedUser.language
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
-}
 
-/**
- * 获取用户钱包信息
- */
-async function getWallet(req, res, next) {
-  try {
-    const user = req.user;
-    
-    // 获取链上余额 (模拟)
-    const eacoBalance = await getTokenBalance(user.wallet_address);
-    
+    const [totalUsers] = await pool.query('SELECT COUNT(*) FROM carbon_accounts');
+
     res.json({
       code: 0,
       message: 'success',
       data: {
-        address: user.wallet_address,
-        balances: [
-          {
-            token: 'EACO',
-            balance: user.total_reward_eaco,
-            in_usd: (user.total_reward_eaco * 0.01).toFixed(2)
-          },
-          {
-            token: 'USDT',
-            balance: 0,
-            in_usd: '0.00'
-          },
-          {
-            token: 'USDC',
-            balance: 0,
-            in_usd: '0.00'
-          },
-          {
-            token: 'SOL',
-            balance: 0,
-            in_usd: '0.00'
-          }
-        ]
-      }
+        total_co2_kg: parseFloat(account[0].total_co2_kg),
+        available_co2_kg: parseFloat(account[0].available_co2_kg),
+        redeemed_co2_kg: parseFloat(account[0].redeemed_co2_kg),
+        carbon_nft_count: account[0].carbon_nft_count || 0,
+        rank: `${rankResult[0].rank}/${totalUsers[0].count}`,
+        rank_badge: getRankBadge(parseFloat(account[0].total_co2_kg)),
+      },
     });
   } catch (error) {
-    next(error);
+    console.error('获取碳积分账户失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
-/**
- * 创建新钱包
- */
-async function createWallet(req, res, next) {
-  try {
-    res.json({
-      code: 0,
-      message: '钱包创建功能开发中',
-      data: {
-        note: '请联系客服创建新钱包'
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
+function getRankBadge(co2Kg) {
+  if (co2Kg >= 1000) return '🌍 地球守护者';
+  if (co2Kg >= 500) return '🏔️ 碳中和先锋';
+  if (co2Kg >= 100) return '🌲 绿能使者';
+  if (co2Kg >= 50) return '🍃 低碳达人';
+  if (co2Kg >= 10) return '🌿 环保卫士';
+  return '🌱 环保新手';
 }
 
-/**
- * 获取绿电记录
- */
-async function getEnergyRecords(req, res, next) {
+// 获取用户订单列表
+async function getUserOrders(req, res) {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = Math.min(parseInt(req.query.page_size) || 20, 100);
-    
-    const result = await getUserEnergyRecords(req.userId, page, pageSize);
-    
-    res.json({
-      code: 0,
-      message: 'success',
-      data: result
-    });
-  } catch (error) {
-    next(error);
-  }
-}
+    const userId = req.user.user_id;
+    const { page = 1, page_size = 20, status } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(page_size);
 
-/**
- * 获取碳积分账户
- */
-async function getCarbonAccount(req, res, next) {
-  try {
-    const account = await getUserCarbonAccount(req.userId);
-    
-    res.json({
-      code: 0,
-      message: 'success',
-      data: account
-    });
-  } catch (error) {
-    next(error);
-  }
-}
+    let whereClause = ' WHERE o.user_id = $1 ';
+    const params = [userId];
 
-/**
- * 获取用户持有的NFT
- */
-async function getNFTs(req, res, next) {
-  try {
-    const result = await pgPool.query(`
-      SELECT nft_mint, created_at
-      FROM green_energy_records
-      WHERE user_id = $1 AND nft_mint IS NOT NULL
-      ORDER BY created_at DESC
-    `, [req.userId]);
-    
+    if (status) {
+      whereClause += ' AND o.status = $2 ';
+      params.push(status);
+    }
+
+    params.push(parseInt(page_size), offset);
+
+    const [orders] = await pool.query(
+      `SELECT o.*, c.name as campsite_name, c.cover_image
+       FROM orders o
+       LEFT JOIN campsites c ON o.campsite_id = c.id
+       ${whereClause}
+       ORDER BY o.created_at DESC
+       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
+    );
+
     res.json({
       code: 0,
       message: 'success',
       data: {
-        total: result.rows.length,
-        nfts: result.rows.map(row => ({
-          mint: row.nft_mint,
-          createdAt: row.created_at
-        }))
-      }
+        list: orders.map((o) => ({
+          order_id: o.order_id,
+          campsite_name: o.campsite_name,
+          cover_image: o.cover_image,
+          check_in_date: o.check_in_date,
+          check_out_date: o.check_out_date,
+          nights: o.nights,
+          total_price: parseFloat(o.total_price),
+          status: o.status,
+          created_at: o.created_at,
+        })),
+      },
     });
   } catch (error) {
-    next(error);
+    console.error('获取订单列表失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
+  }
+}
+
+// 取消订单
+async function cancelOrder(req, res) {
+  try {
+    const userId = req.user.user_id;
+    const { order_id, reason } = req.body;
+
+    const [order] = await pool.query(
+      'SELECT * FROM orders WHERE order_id = $1 AND user_id = $2 AND status = $3',
+      [order_id, userId, 'pending']
+    );
+
+    if (order.length === 0) {
+      return res.status(404).json({ code: 40001, message: '订单不存在或无法取消' });
+    }
+
+    await pool.query(
+      'UPDATE orders SET status = $1, cancelled_at = NOW(), cancel_reason = $2 WHERE order_id = $3',
+      ['cancelled', reason || '', order_id]
+    );
+
+    res.json({
+      code: 0,
+      message: '订单已取消',
+      data: { order_id, status: 'cancelled' },
+    });
+  } catch (error) {
+    console.error('取消订单失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
 module.exports = {
-  getMe,
-  updateMe,
-  getWallet,
-  createWallet,
-  getEnergyRecords,
+  getUserProfile,
+  updateWalletAddress,
   getCarbonAccount,
-  getNFTs
+  getUserOrders,
+  cancelOrder,
 };

@@ -1,349 +1,259 @@
 /**
  * 充电控制器
  */
-const { pgPool } = require('../config/database');
-const { submitEnergyRecord } = require('../services/rewardService');
-const { ERRORS } = require('../config/constants');
+const { pool } = require('../config/database');
+const { SolanaService } = require('../services/solanaService');
+const { RelayService } = require('../services/relayService');
 
-// 模拟充电会话存储
-const activeChargingSessions = new Map();
-
-/**
- * 开始充电
- */
-async function startCharging(req, res, next) {
+// 开始充电
+async function startCharging(req, res) {
   try {
-    const { charger_id, payment_token = 'EACO' } = req.body;
-    
-    // 检查是否已有进行中的充电
-    const existing = await pgPool.query(`
-      SELECT id FROM charging_records 
-      WHERE user_id = $1 AND end_time IS NULL
-    `, [req.userId]);
-    
-    if (existing.rows.length > 0) {
-      return res.status(400).json({
-        code: ERRORS.CHARGING_IN_PROGRESS,
-        message: '已有进行中的充电会话'
-      });
+    const userId = req.user.user_id;
+    const { charger_id } = req.body;
+
+    // 检查充电桩是否在线
+    const [charger] = await pool.query(
+      `SELECT c.*, cs.name as campsite_name FROM chargers c
+       LEFT JOIN campsites cs ON c.campsite_id = cs.id
+       WHERE c.charger_id = $1`,
+      [charger_id]
+    );
+
+    if (charger.length === 0) {
+      return res.status(404).json({ code: 50001, message: '充电桩不存在' });
     }
-    
-    // 创建充电记录
-    const result = await pgPool.query(`
-      INSERT INTO charging_records (
-        user_id, campsite_id, charger_id, start_time, energy_kwh, payment_token, payment_status
-      ) VALUES ($1,
-        (SELECT id FROM campsites WHERE status = 'active' ORDER BY RANDOM() LIMIT 1),
-        $2, NOW(), 0, $3, 'pending')
-      RETURNING *
-    `, [req.userId, charger_id, payment_token]);
-    
-    const record = result.rows[0];
-    
-    // 存储活跃会话
-    activeChargingSessions.set(record.id, {
-      startTime: Date.now(),
-      chargerId: charger_id
+
+    if (charger[0].status !== 'online') {
+      return res.status(400).json({ code: 50001, message: '充电桩离线' });
+    }
+
+    // 检查是否有正在进行的充电
+    const [active] = await pool.query(
+      `SELECT * FROM charging_sessions WHERE user_id = $1 AND status = $2`,
+      [userId, 'charging']
+    );
+
+    if (active.length > 0) {
+      return res.status(400).json({ code: 50002, message: '已有正在进行的充电会话' });
+    }
+
+    // 创建充电会话
+    const sessionId = `SES-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+
+    await pool.query(
+      `INSERT INTO charging_sessions (session_id, user_id, charger_id, campsite_id, status, start_time)
+       VALUES ($1, $2, $3, $4, $5, NOW())`,
+      [sessionId, userId, charger_id, charger[0].campsite_id, 'charging']
+    );
+
+    // 更新充电桩状态
+    await pool.query(
+      `UPDATE chargers SET status = $1, current_user_id = $2 WHERE charger_id = $3`,
+      ['in_use', userId, charger_id]
+    );
+
+    // 通过 Relay 通知硬件开始供电
+    await RelayService.startCharging(charger_id, sessionId);
+
+    // Socket.IO 通知
+    const io = req.app.get('io');
+    io.to(`user:${userId}`).emit('charging_started', {
+      session_id: sessionId,
+      charger_id,
+      start_time: new Date().toISOString(),
     });
-    
+
     res.json({
       code: 0,
       message: '充电已开始',
       data: {
-        charging_id: record.id,
-        session_id: record.id,
-        start_time: record.start_time,
-        realtime: {
-          power_w: 0,
-          voltage_v: 0,
-          current_a: 0,
-          energy_kwh: 0
-        }
-      }
+        session_id: sessionId,
+        charger_id,
+        charger_name: charger[0].name,
+        campsite_name: charger[0].campsite_name,
+        start_time: new Date().toISOString(),
+        status: 'charging',
+      },
     });
   } catch (error) {
-    next(error);
+    console.error('开始充电失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
-/**
- * 获取当前充电状态
- */
-async function getCurrentCharging(req, res, next) {
+// 停止充电
+async function stopCharging(req, res) {
   try {
-    const result = await pgPool.query(`
-      SELECT c.*, cr.name as campsite_name
-      FROM charging_records c
-      LEFT JOIN campsites cr ON c.campsite_id = cr.id
-      WHERE c.user_id = $1 AND c.end_time IS NULL
-      ORDER BY c.start_time DESC
-      LIMIT 1
-    `, [req.userId]);
-    
-    if (result.rows.length === 0) {
-      return res.json({
-        code: 0,
-        message: 'success',
-        data: {
-          has_active: false,
-          charging_id: null
-        }
-      });
-    }
-    
-    const record = result.rows[0];
-    const session = activeChargingSessions.get(record.id);
-    const elapsedMs = session ? Date.now() - session.startTime : 0;
-    const elapsedHours = elapsedMs / (1000 * 60 * 60);
-    
-    res.json({
-      code: 0,
-      message: 'success',
-      data: {
-        has_active: true,
-        charging_id: record.id,
-        charger_id: record.charger_id,
-        campsite_name: record.campsite_name,
-        start_time: record.start_time,
-        elapsed_hours: parseFloat(elapsedHours.toFixed(4)),
-        realtime: {
-          power_w: 3200, // 模拟数据
-          voltage_v: 220.5,
-          current_a: 14.5,
-          energy_kwh: parseFloat((elapsedHours * 3.2).toFixed(4))
-        }
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
-}
+    const userId = req.user.user_id;
+    const { session_id } = req.body;
 
-/**
- * 停止充电
- */
-async function stopCharging(req, res, next) {
-  try {
-    const { charging_id } = req.body;
-    
-    const recordResult = await pgPool.query(
-      'SELECT * FROM charging_records WHERE id = $1 AND user_id = $2 AND end_time IS NULL',
-      [charging_id, req.userId]
+    // 获取充电会话
+    const [session] = await pool.query(
+      `SELECT * FROM charging_sessions WHERE session_id = $1 AND user_id = $2 AND status = $3`,
+      [session_id, userId, 'charging']
     );
-    
-    if (recordResult.rows.length === 0) {
-      return res.status(404).json({
-        code: ERRORS.CHARGING_NOT_FOUND,
-        message: '充电记录不存在或已结束'
-      });
+
+    if (session.length === 0) {
+      return res.status(404).json({ code: 50003, message: '充电会话不存在' });
     }
-    
-    const record = recordResult.rows[0];
-    const session = activeChargingSessions.get(charging_id);
-    
-    // 计算充电量
-    const elapsedMs = session ? Date.now() - session.startTime : 0;
-    const elapsedHours = elapsedMs / (1000 * 60 * 60);
-    const energyKwh = parseFloat((elapsedHours * 3.2).toFixed(4));
-    
-    // 计算费用 (假设$0.10/kWh)
-    const pricePerKwh = 10000; // $0.10 in USDC最小单位
-    const totalAmount = Math.floor(energyKwh * pricePerKwh);
-    
-    // 更新记录
-    await pgPool.query(`
-      UPDATE charging_records SET
-        end_time = NOW(),
-        energy_kwh = $1,
-        avg_power_w = $2,
-        max_power_w = $3,
-        price_per_kwh = $4,
-        total_amount = $5,
-        payment_status = 'completed'
-      WHERE id = $6
-    `, [energyKwh, 2800, 3500, pricePerKwh / 100000, totalAmount, charging_id]);
-    
-    // 删除活跃会话
-    activeChargingSessions.delete(charging_id);
-    
-    // 检查是否使用EACO支付
-    const eacoPayment = record.payment_token === 'EACO';
-    const finalAmount = eacoPayment ? Math.floor(totalAmount * 0.9) : totalAmount;
-    
+
+    // 通过 Relay 获取最终发电量
+    const energyData = await RelayService.stopCharging(session[0].charger_id, session_id);
+    const energyKwh = energyData.energy_kwh || 0;
+    const duration = energyData.duration || 0;
+
+    // 更新充电会话
+    await pool.query(
+      `UPDATE charging_sessions SET
+        status = $1, end_time = NOW(), energy_kwh = $2, duration_seconds = $3
+       WHERE session_id = $4`,
+      ['completed', energyKwh, duration, session_id]
+    );
+
+    // 释放充电桩
+    await pool.query(
+      `UPDATE chargers SET status = 'online', current_user_id = NULL WHERE charger_id = $1`,
+      [session[0].charger_id]
+    );
+
+    // 计算奖励并上链
+    const rewardResult = await SolanaService.distributeReward(userId, energyKwh, session_id);
+
+    // 获取营地价格计算费用
+    const [charger] = await pool.query(
+      'SELECT c.price_per_kwh, cs.price_per_kwh as campsite_price FROM chargers c LEFT JOIN campsites cs ON c.campsite_id = cs.id WHERE c.charger_id = $1',
+      [session[0].charger_id]
+    );
+    const pricePerKwh = charger[0]?.campsite_price || 0.5;
+    const totalCost = energyKwh * pricePerKwh;
+
+    // Socket.IO 通知
+    const io = req.app.get('io');
+    io.to(`user:${userId}`).emit('charging_completed', {
+      session_id,
+      energy_kwh: energyKwh,
+      duration_seconds: duration,
+      reward_tx: rewardResult.txHash,
+      total_cost: totalCost,
+    });
+
     res.json({
       code: 0,
       message: '充电已完成',
       data: {
-        charging_id,
-        total_energy_kwh: energyKwh,
-        total_amount: finalAmount,
-        payment_token: record.payment_token,
-        discount_applied: eacoPayment,
-        reward_eaco: Math.floor(energyKwh * 1000),
-        carbon_kg: parseFloat((energyKwh * 0.5).toFixed(4))
-      }
+        session_id,
+        energy_kwh: energyKwh,
+        duration_seconds: duration,
+        duration_formatted: `${Math.floor(duration / 60)}分${duration % 60}秒`,
+        total_cost: totalCost.toFixed(2),
+        reward_amount: rewardResult.rewardAmount,
+        reward_tx: rewardResult.txHash,
+        co2_saved_kg: (energyKwh * 0.5).toFixed(2), // 约0.5kg CO2/kWh
+      },
     });
   } catch (error) {
-    next(error);
+    console.error('停止充电失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
-/**
- * 获取充电历史
- */
-async function getChargingHistory(req, res, next) {
+// 获取充电记录
+async function getChargingHistory(req, res) {
   try {
+    const userId = req.user.user_id;
     const { page = 1, page_size = 20 } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(page_size);
-    
-    const result = await pgPool.query(`
-      SELECT c.*, cr.name as campsite_name
-      FROM charging_records c
-      LEFT JOIN campsites cr ON c.campsite_id = cr.id
-      WHERE c.user_id = $1 AND c.end_time IS NOT NULL
-      ORDER BY c.start_time DESC
-      LIMIT $2 OFFSET $3
-    `, [req.userId, parseInt(page_size), offset]);
-    
-    const countResult = await pgPool.query(
-      'SELECT COUNT(*) FROM charging_records WHERE user_id = $1 AND end_time IS NOT NULL',
-      [req.userId]
+
+    const [rows] = await pool.query(
+      `SELECT cs.*, c.name as charger_name, c.charger_type,
+              ca.name as campsite_name, ca.address as campsite_address
+       FROM charging_sessions cs
+       LEFT JOIN chargers c ON cs.charger_id = c.charger_id
+       LEFT JOIN campsites ca ON cs.campsite_id = ca.id
+       WHERE cs.user_id = $1
+       ORDER BY cs.start_time DESC
+       LIMIT $2 OFFSET $3`,
+      [userId, parseInt(page_size), offset]
     );
-    
+
+    const sessions = rows.map((s) => ({
+      session_id: s.session_id,
+      charger_id: s.charger_id,
+      charger_name: s.charger_name,
+      charger_type: s.charger_type,
+      campsite_name: s.campsite_name,
+      campsite_address: s.campsite_address,
+      status: s.status,
+      start_time: s.start_time,
+      end_time: s.end_time,
+      energy_kwh: s.energy_kwh ? parseFloat(s.energy_kwh) : null,
+      duration_seconds: s.duration_seconds,
+      reward_tx: s.reward_tx,
+    }));
+
     res.json({
       code: 0,
       message: 'success',
-      data: {
-        total: parseInt(countResult.rows[0].count),
-        page: parseInt(page),
-        page_size: parseInt(page_size),
-        records: result.rows.map(row => ({
-          id: row.id,
-          charger_id: row.charger_id,
-          campsite_name: row.campsite_name,
-          start_time: row.start_time,
-          end_time: row.end_time,
-          energy_kwh: parseFloat(row.energy_kwh),
-          max_power_w: row.max_power_w,
-          avg_power_w: row.avg_power_w,
-          total_amount: row.total_amount,
-          payment_token: row.payment_token,
-          on_chain: row.on_chain,
-          chain_tx_hash: row.chain_tx_hash
-        }))
-      }
+      data: { list: sessions },
     });
   } catch (error) {
-    next(error);
+    console.error('获取充电记录失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
-/**
- * 提交充电数据供预言机验证
- */
-async function verifyCharging(req, res, next) {
+// 获取实时充电状态
+async function getChargingStatus(req, res) {
   try {
-    const { charging_id, oracle_signature } = req.body;
-    
-    const recordResult = await pgPool.query(
-      'SELECT * FROM charging_records WHERE id = $1 AND user_id = $2',
-      [charging_id, req.userId]
+    const userId = req.user.user_id;
+
+    const [session] = await pool.query(
+      `SELECT cs.*, c.name as charger_name, ca.name as campsite_name
+       FROM charging_sessions cs
+       LEFT JOIN chargers c ON cs.charger_id = c.charger_id
+       LEFT JOIN campsites ca ON cs.campsite_id = ca.id
+       WHERE cs.user_id = $1 AND cs.status = $2`,
+      [userId, 'charging']
     );
-    
-    if (recordResult.rows.length === 0) {
-      return res.status(404).json({
-        code: ERRORS.CHARGING_NOT_FOUND,
-        message: '充电记录不存在'
-      });
-    }
-    
-    const record = recordResult.rows[0];
-    
-    if (record.on_chain) {
+
+    if (session.length === 0) {
       return res.json({
         code: 0,
-        message: '该记录已上链',
-        data: {
-          verified: true,
-          chain_tx_hash: record.chain_tx_hash
-        }
+        message: 'success',
+        data: { status: 'idle', session: null },
       });
     }
-    
-    // 提交绿电奖励
-    const result = await submitEnergyRecord(
-      req.userId,
-      charging_id,
-      record.energy_kwh * 1000,
-      '霍尔果斯',
-      oracle_signature || 'simulated_signature'
-    );
-    
-    // 更新充电记录
-    await pgPool.query(`
-      UPDATE charging_records SET on_chain = true, chain_tx_hash = $1, chain_record_id = $2
-      WHERE id = $3
-    `, [result.txHash, result.recordId, charging_id]);
-    
-    res.json({
-      code: 0,
-      message: '验证成功',
-      data: {
-        verified: true,
-        record_id: result.recordId,
-        energy_kwh: result.energyKwh,
-        reward_eaco: result.rewardEaco,
-        co2_kg: result.co2Kg,
-        tx_hash: result.txHash,
-        minted: result.minted
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
-}
 
-/**
- * 获取验证状态
- */
-async function getVerifyStatus(req, res, next) {
-  try {
-    const { charging_id } = req.query;
-    
-    const result = await pgPool.query(
-      'SELECT on_chain, chain_tx_hash, chain_record_id FROM charging_records WHERE id = $1 AND user_id = $2',
-      [charging_id, req.userId]
-    );
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        code: ERRORS.CHARGING_NOT_FOUND,
-        message: '充电记录不存在'
-      });
-    }
-    
-    const record = result.rows[0];
-    
+    // 获取实时数据
+    const realTimeData = await RelayService.getRealTimeData(session[0].charger_id);
+
     res.json({
       code: 0,
       message: 'success',
       data: {
-        charging_id,
-        on_chain: record.on_chain,
-        chain_tx_hash: record.chain_tx_hash,
-        chain_record_id: record.chain_record_id
-      }
+        status: 'charging',
+        session: {
+          session_id: session[0].session_id,
+          charger_name: session[0].charger_name,
+          campsite_name: session[0].campsite_name,
+          start_time: session[0].start_time,
+          current_power_kw: realTimeData.power_kw,
+          current_voltage: realTimeData.voltage,
+          current_ampere: realTimeData.ampere,
+          total_energy_kwh: realTimeData.energy_kwh,
+          elapsed_seconds: Math.floor((Date.now() - new Date(session[0].start_time)) / 1000),
+        },
+      },
     });
   } catch (error) {
-    next(error);
+    console.error('获取充电状态失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
 module.exports = {
   startCharging,
-  getCurrentCharging,
   stopCharging,
   getChargingHistory,
-  verifyCharging,
-  getVerifyStatus
+  getChargingStatus,
 };

@@ -1,237 +1,191 @@
 /**
- * P2P能源控制器
+ * P2P 控制器
  */
-const { v4: uuidv4 } = require('uuid');
-const { pgPool } = require('../config/database');
-const { ERRORS } = require('../config/constants');
+const { pool } = require('../config/database');
 
-/**
- * 挂牌出售
- */
-async function createListing(req, res, next) {
+// 获取 P2P 挂单列表
+async function getOrders(req, res) {
   try {
-    const { energy_kwh, price_eaco_per_kwh, location_text, latitude, longitude } = req.body;
-    
-    const listingNo = 'LST' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase();
-    
-    const result = await pgPool.query(`
-      INSERT INTO energy_listings (
-        listing_no, user_id, energy_kwh, remaining_kwh, price_eaco_per_kwh,
-        location_text, latitude, longitude, status, created_at
-      ) VALUES ($1,$2,$3,$3,$4,$5,$6,$7,'active',NOW())
-      RETURNING *
-    `, [listingNo, req.userId, energy_kwh, price_eaco_per_kwh, location_text, latitude, longitude]);
-    
-    const listing = result.rows[0];
-    
-    res.json({
-      code: 0,
-      message: '挂牌成功',
-      data: {
-        listing_id: listing.id,
-        listing_no: listing.listing_no,
-        energy_kwh: listing.energy_kwh,
-        remaining_kwh: listing.remaining_kwh,
-        price_eaco_per_kwh: listing.price_eaco_per_kwh,
-        status: listing.status
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-/**
- * 获取挂牌列表
- */
-async function getListings(req, res, next) {
-  try {
-    const { status = 'active', page = 1, page_size = 20 } = req.query;
+    const { side, payment_token = 'USDT', page = 1, page_size = 20 } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(page_size);
-    
-    const result = await pgPool.query(`
-      SELECT l.*, u.nickname
-      FROM energy_listings l
-      JOIN users u ON l.user_id = u.id
-      WHERE l.status = $1
-      ORDER BY l.created_at DESC
-      LIMIT $2 OFFSET $3
-    `, [status, parseInt(page_size), offset]);
-    
-    const countResult = await pgPool.query(
-      'SELECT COUNT(*) FROM energy_listings WHERE status = $1',
-      [status]
+
+    let whereClause = ` WHERE po.status = 'active' AND po.payment_token = $1 `;
+    const params = [payment_token];
+
+    if (side) {
+      params.push(side);
+      whereClause += ` AND po.side = $${params.length}`;
+    }
+
+    params.push(parseInt(page_size), offset);
+
+    const [rows] = await pool.query(
+      `SELECT po.*, u.phone_mask, u.level as user_level
+       FROM p2p_orders po
+       LEFT JOIN users u ON po.user_id = u.id
+       ${whereClause}
+       ORDER BY po.created_at DESC
+       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
     );
-    
+
     res.json({
       code: 0,
       message: 'success',
       data: {
-        total: parseInt(countResult.rows[0].count),
-        page: parseInt(page),
-        page_size: parseInt(page_size),
-        listings: result.rows.map(row => ({
-          id: row.id,
-          listing_no: row.listing_no,
-          seller: row.nickname || 'Anonymous',
-          energy_kwh: row.energy_kwh,
-          remaining_kwh: row.remaining_kwh,
-          price_eaco_per_kwh: row.price_eaco_per_kwh,
-          location_text: row.location_text,
-          status: row.status,
-          created_at: row.created_at
-        }))
-      }
+        list: rows.map((o) => ({
+          order_id: o.id,
+          side: o.side,
+          price_cents: parseInt(o.price_cents),
+          quantity: parseInt(o.quantity),
+          remaining: parseInt(o.quantity) - parseInt(o.filled_quantity),
+          payment_token: o.payment_token,
+          user_mask: o.phone_mask,
+          user_level: o.user_level,
+          created_at: o.created_at,
+        })),
+      },
     });
   } catch (error) {
-    next(error);
+    console.error('获取P2P订单失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
-/**
- * 获取挂牌详情
- */
-async function getListingDetail(req, res, next) {
+// 创建 P2P 挂单
+async function createOrder(req, res) {
   try {
-    const { id } = req.params;
-    
-    const result = await pgPool.query(`
-      SELECT l.*, u.nickname as seller_name
-      FROM energy_listings l
-      JOIN users u ON l.user_id = u.id
-      WHERE l.id = $1
-    `, [id]);
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        code: 40001,
-        message: '挂牌不存在'
-      });
+    const userId = req.user.user_id;
+    const { side, price_cents, quantity, payment_token = 'USDT' } = req.body;
+
+    if (!['sell', 'buy'].includes(side)) {
+      return res.status(400).json({ code: 10001, message: '无效的交易方向' });
     }
-    
-    const row = result.rows[0];
-    
+
+    const orderId = `P2P-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+
+    const [result] = await pool.query(
+      `INSERT INTO p2p_orders (order_id, user_id, side, price_cents, quantity, payment_token, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [orderId, userId, side, price_cents, quantity, payment_token, 'active']
+    );
+
     res.json({
       code: 0,
-      message: 'success',
+      message: '挂单成功',
       data: {
-        id: row.id,
-        listing_no: row.listing_no,
-        seller: row.seller_name || 'Anonymous',
-        energy_kwh: row.energy_kwh,
-        remaining_kwh: row.remaining_kwh,
-        price_eaco_per_kwh: row.price_eaco_per_kwh,
-        location_text: row.location_text,
-        status: row.status,
-        created_at: row.created_at
-      }
+        order_id: orderId,
+        side,
+        price_cents,
+        quantity,
+        payment_token,
+        status: 'active',
+      },
     });
   } catch (error) {
-    next(error);
+    console.error('创建P2P订单失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
-/**
- * 购买电力
- */
-async function buyEnergy(req, res, next) {
+// 成交 P2P 订单
+async function fillOrder(req, res) {
   try {
-    const { id } = req.params;
-    const { energy_kwh } = req.body;
-    
-    const listingResult = await pgPool.query(
-      'SELECT * FROM energy_listings WHERE id = $1 AND status = $2',
-      [id, 'active']
+    const userId = req.user.user_id;
+    const { order_id, quantity } = req.body;
+
+    const [order] = await pool.query(
+      'SELECT * FROM p2p_orders WHERE order_id = $1 AND status = $2',
+      [order_id, 'active']
     );
-    
-    if (listingResult.rows.length === 0) {
-      return res.status(404).json({
-        code: 40001,
-        message: '挂牌不存在或已下架'
-      });
+
+    if (order.length === 0) {
+      return res.status(404).json({ code: 40001, message: '订单不存在或已关闭' });
     }
-    
-    const listing = listingResult.rows[0];
-    
-    if (listing.remaining_kwh < energy_kwh) {
-      return res.status(400).json({
-        code: ERRORS.INVALID_PARAMS,
-        message: `剩余电量不足，当前剩余 ${listing.remaining_kwh}Wh`
-      });
+
+    if (order[0].user_id === userId) {
+      return res.status(400).json({ code: 10001, message: '不能和自己的订单成交' });
     }
-    
-    const totalPrice = Math.floor(energy_kwh * listing.price_eaco_per_kwh / 1000);
-    
-    // 更新挂牌
-    await pgPool.query(`
-      UPDATE energy_listings SET
-        remaining_kwh = remaining_kwh - $1,
-        sold_kwh = sold_kwh + $1,
-        updated_at = NOW()
-      WHERE id = $2
-    `, [energy_kwh, id]);
-    
-    // 检查是否售罄
-    const updated = await pgPool.query(
-      'SELECT remaining_kwh FROM energy_listings WHERE id = $1',
-      [id]
+
+    const remaining = parseInt(order[0].quantity) - parseInt(order[0].filled_quantity);
+    if (quantity > remaining) {
+      return res.status(400).json({ code: 40001, message: '数量超出可成交范围' });
+    }
+
+    const fillId = `FILL-${Date.now()}`;
+    const totalCents = parseInt(order[0].price_cents) * quantity;
+
+    // 记录成交
+    await pool.query(
+      `INSERT INTO p2p_fills (fill_id, order_id, taker_id, maker_id, quantity, price_cents, total_cents)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [fillId, order_id, userId, order[0].user_id, quantity, order[0].price_cents, totalCents]
     );
-    
-    if (updated.rows[0].remaining_kwh <= 0) {
-      await pgPool.query(
-        "UPDATE energy_listings SET status = 'sold' WHERE id = $1",
-        [id]
-      );
+
+    // 更新订单
+    await pool.query(
+      `UPDATE p2p_orders SET filled_quantity = filled_quantity + $1 WHERE order_id = $2`,
+      [quantity, order_id]
+    );
+
+    // 检查是否完全成交
+    const [updated] = await pool.query('SELECT * FROM p2p_orders WHERE order_id = $1', [order_id]);
+    if (parseInt(updated[0].filled_quantity) >= parseInt(updated[0].quantity)) {
+      await pool.query(`UPDATE p2p_orders SET status = 'filled' WHERE order_id = $1`, [order_id]);
     }
-    
+
     res.json({
       code: 0,
-      message: '购买成功',
+      message: '成交成功',
       data: {
-        listing_id: id,
-        energy_kwh,
-        total_price: totalPrice,
-        seller: listing.user_id,
-        tx_hash: 'sim_tx_' + Date.now()
-      }
+        fill_id: fillId,
+        order_id,
+        quantity,
+        price_cents: parseInt(order[0].price_cents),
+        total_cents: totalCents,
+        status: 'filled',
+      },
     });
   } catch (error) {
-    next(error);
+    console.error('P2P成交失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
-/**
- * 撤销挂牌
- */
-async function cancelListing(req, res, next) {
+// 取消 P2P 订单
+async function cancelOrder(req, res) {
   try {
-    const { id } = req.params;
-    
-    const result = await pgPool.query(
-      'UPDATE energy_listings SET status = $1, updated_at = NOW() WHERE id = $2 AND user_id = $3 RETURNING id',
-      ['cancelled', id, req.userId]
+    const userId = req.user.user_id;
+    const { order_id } = req.params;
+
+    const [order] = await pool.query(
+      'SELECT * FROM p2p_orders WHERE order_id = $1 AND user_id = $2 AND status = $3',
+      [order_id, userId, 'active']
     );
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        code: 40001,
-        message: '挂牌不存在或无权操作'
-      });
+
+    if (order.length === 0) {
+      return res.status(404).json({ code: 40001, message: '订单不存在或无法取消' });
     }
-    
+
+    await pool.query(
+      `UPDATE p2p_orders SET status = 'cancelled' WHERE order_id = $1`,
+      [order_id]
+    );
+
     res.json({
       code: 0,
-      message: '挂牌已撤销'
+      message: '订单已取消',
+      data: { order_id, status: 'cancelled' },
     });
   } catch (error) {
-    next(error);
+    console.error('取消P2P订单失败:', error);
+    res.status(500).json({ code: 50000, message: '服务器错误' });
   }
 }
 
 module.exports = {
-  createListing,
-  getListings,
-  getListingDetail,
-  buyEnergy,
-  cancelListing
+  getOrders,
+  createOrder,
+  fillOrder,
+  cancelOrder,
 };

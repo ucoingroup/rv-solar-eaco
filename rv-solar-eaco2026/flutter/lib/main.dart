@@ -24,7 +24,7 @@ void main() async {
   // 初始化依赖注入
   await initDependencies();
   
-  runApp(const RV SolarEACOApp());
+  runApp(const RVSolarEACOApp());
 }
 
 class RVSolarEACOApp extends StatelessWidget {

@@ -13,6 +13,7 @@ import '../../features/charging/presentation/pages/charging_page.dart';
 import '../../features/wallet/presentation/pages/wallet_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/community/presentation/pages/community_page.dart';
+import 'main_page.dart';
 
 part 'app_router.gr.dart';
 
@@ -35,55 +36,4 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: CampsiteDetailRoute.page),
         AutoRoute(page: ChargingRoute.page),
       ];
-}
-
-@RoutePage()
-class MainPage extends StatelessWidget {
-  const MainPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AutoTabsScaffold(
-      routes: const [
-        HomeRoute(),
-        CampsiteListRoute(),
-        WalletRoute(),
-        CommunityRoute(),
-        ProfileRoute(),
-      ],
-      bottomNavigationBuilder: (_, tabsRouter) {
-        return BottomNavigationBar(
-          currentIndex: tabsRouter.activeIndex,
-          onTap: tabsRouter.setActiveIndex,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: '首页',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map_outlined),
-              activeIcon: Icon(Icons.map),
-              label: '营地',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_wallet_outlined),
-              activeIcon: Icon(Icons.account_balance_wallet),
-              label: '钱包',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.people_outlined),
-              activeIcon: Icon(Icons.people),
-              label: '社区',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outlined),
-              activeIcon: Icon(Icons.person),
-              label: '我的',
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
