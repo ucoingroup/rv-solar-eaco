@@ -11,6 +11,9 @@ import 'core/di/injection.dart';
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/campsite/presentation/bloc/campsite_bloc.dart';
+import 'features/charging/presentation/bloc/charging_bloc.dart';
+import 'features/wallet/presentation/bloc/wallet_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +39,15 @@ class RVSolarEACOApp extends StatelessWidget {
       providers: [
         BlocProvider<AuthBloc>(
           create: (_) => GetIt.I<AuthBloc>()..add(AuthCheckRequested()),
+        ),
+        BlocProvider<CampsiteBloc>(
+          create: (_) => GetIt.I<CampsiteBloc>(),
+        ),
+        BlocProvider<ChargingBloc>(
+          create: (_) => GetIt.I<ChargingBloc>(),
+        ),
+        BlocProvider<WalletBloc>(
+          create: (_) => GetIt.I<WalletBloc>(),
         ),
       ],
       child: MaterialApp.router(
