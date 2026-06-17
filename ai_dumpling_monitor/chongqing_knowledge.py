@@ -294,13 +294,13 @@ def get_full_knowledge_base() -> str:
         "# 重庆水饺知识库\n",
         get_keyword_summary(),
         "\n---\n",
-        KNOWLEDLEDGE_BASE.get("recipe_overview", ""),
+        KNOWLEDGE_BASE.get("recipe_overview", ""),
         "\n---\n",
-        KNOWLEDLEDGE_BASE.get("cooking_guide", ""),
+        KNOWLEDGE_BASE.get("cooking_guide", ""),
         "\n---\n",
-        KNOWLEDGEDGE_BASE.get("brand_analysis", ""),
+        KNOWLEDGE_BASE.get("brand_analysis", ""),
         "\n---\n",
-        KNOWLEDGEDGE_BASE.get("folding_techniques", ""),
+        KNOWLEDGE_BASE.get("folding_techniques", ""),
     ]
     return "\n".join(parts)
 
@@ -309,5 +309,5 @@ if __name__ == "__main__":
     print(get_keyword_summary())
     print("\n" + "="*50)
     print("知识库主题列表:")
-    for key in KNOWLEDGEDGE_BASE.keys():
+    for key in KNOWLEDGE_BASE.keys():
         print(f"  - {key}")
