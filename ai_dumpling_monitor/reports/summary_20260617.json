@@ -1,0 +1,61 @@
+{
+  "report_date": "2026年06月17日 12:36",
+  "cities": [
+    "重庆",
+    "上海",
+    "广东"
+  ],
+  "top10_ai_tools": [
+    {
+      "rank": 1,
+      "platform": "智谱AI GLM",
+      "free额度": "2000万Token（新户赠送）"
+    },
+    {
+      "rank": 2,
+      "platform": "硅基流动 SiliconFlow",
+      "free额度": "2000万Token（新户）+ Qwen2.5-7B等小模型永久免费"
+    },
+    {
+      "rank": 3,
+      "platform": "DeepSeek",
+      "free额度": "500万Token（新户，30天内）"
+    },
+    {
+      "rank": 4,
+      "platform": "阿里云百炼",
+      "free额度": "每个模型100万Token（3个月有效）"
+    },
+    {
+      "rank": 5,
+      "platform": "Google Gemini",
+      "free额度": "1500次/天（永久）"
+    },
+    {
+      "rank": 6,
+      "platform": "OpenAI",
+      "free额度": "$5 赠金（新户，3个月）"
+    },
+    {
+      "rank": 7,
+      "platform": "Anthropic Claude",
+      "free额度": "Claude 3.5 Sonnet免费层可用"
+    },
+    {
+      "rank": 8,
+      "platform": "百度智能云千帆",
+      "free额度": "新户赠送额度（含文心大模型）"
+    },
+    {
+      "rank": 9,
+      "platform": "腾讯云混元",
+      "free额度": "新户资源包"
+    },
+    {
+      "rank": 10,
+      "platform": "Kimi（月之暗面）",
+      "free额度": "15元个人认证 + Token不限量"
+    }
+  ],
+  "next_update": "2026-07-01"
+}
