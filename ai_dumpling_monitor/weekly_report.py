@@ -14,11 +14,19 @@ from typing import Dict, List
 try:
     from config import WORKSPACE, REPORT_DIR, API_KEYS, CITIES, setup_logging
     from apis import FREE_API_QUOTAS, get_quota_summary, test_api_health, API_CALL_EXAMPLES
+    from chongqing_knowledge import (
+        CHONGQING_DUMPLING_KEYWORDS, KNOWLEDGE_BASE, CONTENT_PLAN,
+        get_keyword_summary, get_full_knowledge_base
+    )
 except ImportError:
     import sys
     sys.path.insert(0, str(Path(__file__).parent))
     from config import WORKSPACE, REPORT_DIR, API_KEYS, CITIES, setup_logging
     from apis import FREE_API_QUOTAS, get_quota_summary, test_api_health, API_CALL_EXAMPLES
+    from chongqing_knowledge import (
+        CHONGQING_DUMPLING_KEYWORDS, KNOWLEDGE_BASE, CONTENT_PLAN,
+        get_keyword_summary, get_full_knowledge_base
+    )
 
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -250,7 +258,12 @@ async def generate_full_weekly_report(logger) -> Path:
     for city, report_content in city_reports.items():
         full_report += f"### 🏙️ {city}\n{report_content}\n---\n"
     
-    # 三城横向对比
+    # 三城横向对比 + 重庆关键词分析
+    kw_summary = get_keyword_summary()
+    content_plan_rows = ""
+    for item in CONTENT_PLAN.get('weekly_topics', []):
+        content_plan_rows += f"| 第{item['week']}周 | {item['topic']} | {item['format']} | {', '.join(item['keywords'])} | GLM-4-Flash |\n"
+    
     full_report += f"""
 ## 📊 三、三城横向对比
 
@@ -266,7 +279,19 @@ async def generate_full_weekly_report(logger) -> Path:
 
 ---
 
-## ⚠️ 四、本周风险提示
+## 🔍 四、重庆水饺搜索关键词分析（用户真实需求）
+
+{kw_summary}
+
+### 📌 本周内容生产建议（基于搜索热度）
+
+| 周次 | 推荐内容主题 | 格式 | 目标关键词 | AI工具 |
+|:---:|------------|------|-----------|--------|
+{content_plan_rows}
+
+---
+
+## ⚠️ 五、本周风险提示
 
 ### 高优先级（需立即处理）
 
@@ -291,7 +316,7 @@ async def generate_full_weekly_report(logger) -> Path:
 
 ---
 
-## 🚀 五、下周行动清单
+## 🚀 六、下周行动清单
 
 ### 第一优先级
 - ⬜ **申请智谱AI API Key** → https://open.bigmodel.cn/ （2000万Token永久免费）
@@ -309,7 +334,7 @@ async def generate_full_weekly_report(logger) -> Path:
 
 ---
 
-## 📎 六、技术配置说明
+## 📎 七、技术配置说明
 
 ### API Key配置
 编辑 `config.py` 文件，填入以下环境变量（或直接修改文件内API_KEYS字典）：
